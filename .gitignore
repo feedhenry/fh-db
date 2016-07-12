@@ -1,0 +1,15 @@
+lib-cov/
+dist/
+output/
+man/
+test/log/
+*~
+.project
+.settings/
+node_modules/
+.DS_Store
+.idea/
+._.DS_Store
+npm-debug.log
+coverage/
+plato/

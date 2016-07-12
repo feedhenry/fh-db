@@ -1,0 +1,38 @@
+{
+  "name": "fh-db",
+  "description": "FeedHenry Database Library",
+  "version": "1.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:feedhenry/fh-db.git"
+  },
+  "license": "Apache-2.0",
+  "main": "./lib/localdb.js",
+  "directories": {
+    "lib": "./lib/"
+  },
+  "scripts": {
+    "test": "expresso -I lib",
+    "version": "sed -i.bak \"s/sonar.projectVersion=.*/sonar.projectVersion=${npm_package_version}/\" sonar-project.properties && rm sonar-project.properties.bak && git add sonar-project.properties"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "dependencies": {
+    "adm-zip": "~0.4.4",
+    "archiver": "1.0.0",
+    "async": "1.5.2",
+    "bson": "0.4.22",
+    "csvtojson": "0.3.6",
+    "jcsv": "0.0.3",
+    "lodash": "2.4.1",
+    "mongodb": "2.1.18",
+    "stream-buffers": "3.0.0"
+
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-fh-build": "^0.5.0",
+    "istanbul": "^0.3.17"
+  }
+}
