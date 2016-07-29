@@ -1,6 +1,12 @@
 fh-db(1) -- The FeedHenry Database access library
 ===============================================
 
+[![npm package](https://nodei.co/npm/fh-db.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/fh-db/)
+
+[![Dependency Status](https://img.shields.io/david/feedhenry/fh-db.svg?style=flat-square)](https://david-dm.org/feedhenry/fh-db)
+[![Known Vulnerabilities](https://snyk.io/test/npm/fh-db/badge.svg?style=flat-square)](https://snyk.io/test/npm/fh-db)
+
+
 ## DESCRIPTION
 
 This contains the fh.db() layer the works above the mongodb library. It has a Ditch-like interface, with the same actions and parameters
