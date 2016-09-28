@@ -31,18 +31,22 @@ Add fh-db as a dependency to your module and require it where required, like any
 Start the docker machine for the version of mongo you wish to test:
 ```bash
 docker run -d -p 27017:27017 mongo:2.4
+# or (preferred)
+docker run -d -p 27017:27017 mongo:2.6
+# or
+...
 ```
 
 ### Note for docker-machine users
 You will need to connect your localhost:27017 to the docker-machine:27017, do this with the following command:
 ```
-VBoxManage controlvm <docker-machine-name> natpf1 "docker-mongo,tcp,127.0.0.1,27017,,27017"
+VBoxManage controlvm `docker-machine active` natpf1 "docker-mongo,tcp,127.0.0.1,27017,,27017"
 ```
 In the above `docker-mongo` is the name of the rule, this is important to remember, in order to remove it when not required.
 
 Remove the above rule as follows:
 ```
-VBoxManage controlvm dev natpf1 delete docker-mongo
+VBoxManage controlvm `docker-machine active` natpf1 delete docker-mongo
 ```
 
 
