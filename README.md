@@ -30,11 +30,7 @@ Add fh-db as a dependency to your module and require it where required, like any
 ### Start Mongo Server
 Start the docker machine for the version of mongo you wish to test:
 ```bash
-docker run -d -p 27017:27017 mongo:2.4
-# or (preferred)
 docker run -d -p 27017:27017 mongo:2.6
-# or
-...
 ```
 
 ### Note for docker-machine users
@@ -56,8 +52,9 @@ connect to Mongo:
 mongo
 ```
 
-#### For versions > 3.x
-You will need to update the authentication to work with fh-db, which is done as follows:
+#### For MongoDB versions > 3.x
+Well, instead of MongoDB 2.6 stated above if you used MongoDB 3.x, you will need to update the authentication
+to work with fh-db, which is done as follows:
 ```
 use admin
 db.system.users.remove({})
@@ -77,12 +74,7 @@ mongo
 ```
 
 #### Add the admin user:
-##### 2.4.x
-```
-use admin
-db.addUser('admin', 'admin');
-```
-##### >= 2.6
+
 ```
 use admin
 db.createUser({user: 'admin', pwd: 'admin', roles: ['root']})
@@ -97,13 +89,7 @@ mongo admin -u admin -p admin
 #### Add the ditchuser
 
 Log in as the admin user, if you are not yet, then run:
-##### 2.4.x
-```
-use fh-ditch
-db.addUser('ditchuser', 'ditchpassword');
-```
 
-##### >= 2.6
 ```
 use fh-ditch
 db.createUser({user: 'ditchuser', pwd: 'ditchpassword', roles: ['dbAdmin']})
