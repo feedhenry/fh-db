@@ -410,7 +410,7 @@ var testBasicOperationsOwnDatabase = function(cb){
                   testDelete,
                   testListCollections,
                   testDeleteAgain,
-                  testDeleteInvalidGuid,
+                  testDeleteNonHexGuid,
                   testList1,
                   testList2,
                   testList3,
@@ -570,8 +570,8 @@ var testDeleteAgain = function (created, cb) {
   });
 };
 
-var testDeleteInvalidGuid = function(created, cb) {
-  logger.info("test testDeleteInvalidGuid()");
+var testDeleteNonHexGuid = function(created, cb) {
+  logger.info("test testDeleteNonHexGuid()");
   var deleteReq = {
     "__fhdb" : "123456789",
     "type" : "fh_test_collection",
@@ -583,7 +583,8 @@ var testDeleteInvalidGuid = function(created, cb) {
   }
 
   ditch.doDelete(deleteReq, function(err, deleteRes) {
-    assert.ok(err, "Should have called back with error");
+    assert.ok(!err);
+    assert.equal(JSON.stringify(deleteRes), "{}");
     cb();
   });
 };
@@ -1202,6 +1203,89 @@ var testImport = function(created, cb) {
   });
 };
 
+var testNonHexId = function() {
+  logger.info("BEGIN testDbActions...");
+  
+  var collectionName = "fh_test_collection_non_hex_id";
+  var createData = {
+    "__fhdb" : test_fhdb_name,
+    "type" : collectionName,
+    "fields" : {
+      "_id": "foobar",
+      "firstName" : "Foo",
+      "lastName" : "Bar"
+    }
+  };
+
+  async.waterfall([
+    function(cb) {
+      logger.info("test testCreate()");
+
+      var testData = JSON.parse(JSON.stringify(createData));
+      var expectedResult = JSON.parse(JSON.stringify(testData.fields));
+
+      ditch.doCreate(testData, function(err, res) {
+        assert.equal(res.guid, createData.fields._id);
+        assert.equal(res.fields.firstName, createData.fields.firstName);
+        assert.equal(res.fields.lastName, createData.fields.lastName);
+        cb(undefined, res);
+      });
+    },
+    function(created, cb) {
+      logger.info("test testRead()");
+      var readReq = {
+        "__fhdb" : test_fhdb_name,
+        "type" : collectionName,
+        "guid" : created.guid
+      };
+
+      logger.debug("readReq", readReq);
+      ditch.doRead(readReq, function(err, res) {
+        assert.equal(res.guid, createData.fields._id);
+        assert.equal(res.fields.firstName, createData.fields.firstName);
+        assert.equal(res.fields.lastName, createData.fields.lastName);
+        cb(undefined, created);
+      });
+    },
+    function(created, cb) {
+      logger.info("test testUpdate()");
+      var updateReq = JSON.parse(JSON.stringify(created));
+      updateReq.fields.firstName = 'Fizz';
+      updateReq["__fhdb"] = test_fhdb_name;
+
+      ditch.doUpdate(updateReq, function(err, res) {
+        logger.debug("updateRes = " + JSON.stringify(res));
+
+        // firstName should have changed - other fields still the
+        // same
+        assert.equal(res.guid, createData.fields._id);
+        assert.equal(res.fields.firstName, "Fizz");
+        assert.equal(res.fields.lastName, createData.fields.lastName);
+        cb(undefined, created);
+      });
+    },
+    function(created, cb) {
+      logger.info("test testDelete()");
+      var deleteReq = {
+        "__fhdb" : test_fhdb_name,
+        "type" : collectionName,
+        "guid" : created.guid
+      };
+
+      ditch.doDelete(deleteReq, function(err, deleteRes) {
+        assert.equal(deleteRes.guid, createData.fields._id);
+        assert.equal(deleteRes.fields.firstName, "Fizz");
+        assert.equal(deleteRes.fields.lastName, createData.fields.lastName);
+        cb(undefined, created);
+      });
+    }
+  ], function (err, result) {
+    assert.ok(!err);
+    ditch.tearDown();
+  });
+
+};
+
 
 exports.testDbActions = function(beforeExit) {
   logger.info("BEGIN testDbActions...");
@@ -1227,7 +1311,7 @@ exports.testDbActions = function(beforeExit) {
         testListCollections,
         testDelete,
         testDeleteAgain,
-        testDeleteInvalidGuid,
+        testDeleteNonHexGuid,
         testList1,
         testList2,
         testList3,
@@ -1254,7 +1338,8 @@ exports.testDbActions = function(beforeExit) {
         async.apply(testDeleteAll, 0),
         testCollectionOwnAppDatabase,
         testCollectionDitchAppDatabase,
-        testBasicOperationsOwnDatabase
+        testBasicOperationsOwnDatabase,
+        testNonHexId
         ], function (err, result) {
           assert.ok(!err);
           ditch.tearDown();

@@ -332,3 +332,79 @@ exports[ 'test basic database ops' ] = function () {
   }
   self.db.tearUp();
 };
+
+exports[ 'test update and delete item with an id that is not hex' ] = function () {
+  var test_collection_name = "testcollection_forinvaliddocid";
+  var self = this;
+  self.db = new Database();
+  self.db.name = "test-fhmongodb-database";
+
+  self.db.on('tearUp', do_ops);
+  
+  var sampleData = { _id : "foobar", test2 : "test value2"};
+
+  function do_ops() {
+    self.db.db.authenticate(config.database.adminauth.user, config.database.adminauth.user, {authSource:"admin"}, function(err, result){
+      assert.ok(!err);
+      self.db.dropDatabase(function(err) {
+        assert.equal(err, null);
+      
+        self.db.removeAll(test_collection_name, function(err, items) {
+          assert.equal(err, null);
+        
+          self.db.create(test_collection_name, sampleData, function(err, docs) {
+            assert.ok(!err, JSON.stringify(err));
+         
+            async.series([
+              function(cb){
+                self.db.find(test_collection_name, {"_id": sampleData._id}, function(err, items) {
+                  assert.ok(!err, JSON.stringify(err));
+
+                  var numItems = items.length;
+                  assert.equal(1, numItems);
+                  return cb();
+                });
+              },
+              function (cb) {
+                self.db.countCollection(test_collection_name, function(err, count) {
+                    assert.equal(count, 1);
+                    return cb();
+                  });
+              },
+              function(cb) {
+                self.db.update(
+                    test_collection_name,
+                    {"_id": sampleData._id},
+                    { _id : sampleData._id, test2 : "updated test value2"},
+                    false,
+                    function(err) {
+                      assert.ok(!err, JSON.stringify(err));
+                      return cb();
+                    });
+              },
+              function(cb) {
+                self.db.remove(
+                    test_collection_name,
+                    sampleData._id,
+                    function(err) {
+                      assert.ok(!err, JSON.stringify(err));
+                      return cb();
+                    });
+              },
+              function(cb) {
+                self.db.dropCollection(test_collection_name, function(err, item) {
+                  assert.equal(err, null);
+                  return cb();
+                });
+              }
+            ], function(err, results) {
+              self.db.tearDown();
+              assert.ok(!err);
+            });
+          });
+        });
+      });
+    });
+  }
+  self.db.tearUp();
+};
