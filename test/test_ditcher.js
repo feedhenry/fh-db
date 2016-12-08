@@ -39,33 +39,7 @@ var importExportHelpers = require('../lib/importexport/helpers.js')(logger);
 
 var ditch;
 
-
-var config = {
-  "database" : {
-    "host" : "localhost",
-    "port" : 27017,
-    "name" : "fh_ditch_test",
-    "adminauth" : {
-          "user": "admin",
-          "pass": "admin"
-        },
-    "auth" : {
-      "user": "ditchuser",
-      "pass": "ditchpassword",
-      "source": "fh-ditch"
-    },
-    "driver_options": {w:1, j:1}
-  },
-
-  "logger" : {
-    "loglevel" : 3
-  },
-  "fhamqpjs": {
-      "enabled": true,
-      "clusterNodes": ["amqp://localhost:5672"],
-      "maxReconnectAttempts": 10
-    }
-};
+var config = require("./fixtures/base_config.json");
 
 var own_app_config = {
   "database" : {
