@@ -3,9 +3,8 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     unit: [
-      'expresso -I lib -q -c -b',
-      'env DB_PER_APP=false mocha ./test/mocha/mocha_tst_mongo_compat_api.js',
-      'env DB_PER_APP=true mocha ./test/mocha/mocha_tst_mongo_compat_api.js'
+      'env DB_PER_APP=false _mocha -u exports --recursive -t 10000 ./test',
+      'env DB_PER_APP=true _mocha ./test/mocha/mocha_tst_mongo_compat_api.js'
     ]
   });
 

@@ -42,28 +42,28 @@ function createDatabasesAndUsers(cfg, callback){
   });
 }
 
-before(function (done) {
-  createDatabasesAndUsers(config, function () {
-    createApi({
-      __fhdb: TEST_DB_NAME,
-      __dbperapp: DB_PER_APP,
-      connectionUrl: DB_PER_APP ? "mongodb://localhost:27017" : undefined
-    }).then(function (apiInstance) {
-      api = apiInstance;
-      done();
+describe(" (db per app: " + DB_PER_APP + ")", function () {
+  beforeEach(function (done) {
+    createDatabasesAndUsers(config, function () {
+      createApi({
+        __fhdb: TEST_DB_NAME,
+        __dbperapp: DB_PER_APP,
+        connectionUrl: DB_PER_APP ? "mongodb://localhost:27017" : undefined
+      }).then(function (apiInstance) {
+        api = apiInstance;
+        done();
+      });
     });
   });
-});
 
-after(function (done) {
-  api.close().then(function () {
-    done();
-  }).catch(function () {
-    throw new Error("Error closing the database connection");
+  afterEach(function (done) {
+    api.close().then(function () {
+      done();
+    }).catch(function () {
+      throw new Error("Error closing the database connection");
+    });
   });
-});
 
-describe("MongoDB Node.js driver 2.0 compatible API (db per app: " + DB_PER_APP + ")", function () {
   it("creates collection using callback", function (done) {
     // The `fields` object must be passed when the API is used with a shared
     // database. Otherwise the collection will not be created.

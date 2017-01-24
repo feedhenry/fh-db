@@ -249,18 +249,18 @@ var testCollectionOwnAppDatabase = function(cb){
 
 
     db.open(function(err, targetDb){
-      assert.isNull(err);
+      assert.ok(!err);
 
 
       targetDb.authenticate(own_app_config.database.adminauth.user, own_app_config.database.adminauth.pass,{authSource:"admin"}, function(err, result){
-        assert.isNull(err);
+        assert.ok(!err);
 
         targetDb.dropDatabase(function(err, result) {
-          assert.isNull(err);
+          assert.ok(!err);
 
           targetDb.removeUser(own_app_config.database.auth.user, function(){
             targetDb.addUser(own_app_config.database.auth.user, own_app_config.database.auth.pass, function(err, result){
-              assert.isNull(err);
+              assert.ok(!err);
 
               var ownAppDitch = new ditchhandler.Ditcher(own_app_config, logger, "9.8.7-Test Version", function() {
 
@@ -359,7 +359,7 @@ var testBasicOperationsOwnDatabase = function(cb){
   var db = new mongodb.Db(ditcher_app_per_database.database.name, new Server(ditcher_app_per_database.database.host, ditcher_app_per_database.database.port), {fsync:true});
 
   db.open(function(err, targetDb){
-    assert.isNull(err);
+    assert.ok(!err);
 
 
     targetDb.authenticate(ditcher_app_per_database.database.adminauth.user, ditcher_app_per_database.database.adminauth.pass, {authSource: "admin"}, function(err, result){
@@ -413,7 +413,7 @@ var testBasicOperationsOwnDatabase = function(cb){
                   async.apply(testDeleteAll, 0)
                 ], function (err, result) {
                   assert.ok(!err);
-                  cb(err, result);
+                  cb(err);
                 });
               });
             });
@@ -1177,8 +1177,8 @@ var testImport = function(created, cb) {
   });
 };
 
-var testNonHexId = function() {
-  logger.info("BEGIN testDbActions...");
+var testNonHexId = function(done) {
+  logger.info("BEGIN testNonHexId...");
   
   var collectionName = "fh_test_collection_non_hex_id";
   var createData = {
@@ -1256,17 +1256,14 @@ var testNonHexId = function() {
   ], function (err, result) {
     assert.ok(!err);
     ditch.tearDown();
+    return done();
   });
 
 };
 
 
-exports.testDbActions = function(beforeExit) {
+exports.testDbActions = function(done) {
   logger.info("BEGIN testDbActions...");
-
-  beforeExit(function() {
-    logger.info("***************** testDbActions : BEFORE EXIT CALLED *****************");
-  });
 
   //As databases are now password secured, all tests should reflect this.
   //Admin user will set up a username and password for the test database
@@ -1317,6 +1314,7 @@ exports.testDbActions = function(beforeExit) {
         ], function (err, result) {
           assert.ok(!err);
           ditch.tearDown();
+          done();
         });
       });
     });

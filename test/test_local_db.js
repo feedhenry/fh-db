@@ -334,7 +334,7 @@ var testparseMongoConnectionString = function (cb) {
 };
 
 
-exports['test local and remote'] = function () {
+exports['test local and remote'] = function (done) {
 
   async.series([
     testLocalMongoInstance,
@@ -347,6 +347,7 @@ exports['test local and remote'] = function () {
     ],
     function (err) {
       assert.ok(!err);
+      return done();
   });
 
 
