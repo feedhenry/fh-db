@@ -58,7 +58,7 @@ var host_string_array_config = {
   }
 };
 
-exports['test Authentication'] = function() {
+exports['test Authentication'] = function(done) {
   var self = this;
   self.db = new Database();
   self.db.name = "admin";
@@ -66,6 +66,7 @@ exports['test Authentication'] = function() {
     self.db.db.authenticate(config.database.adminauth.user, config.database.adminauth.pass, {authSource: 'admin'}, function(err, result) {
       assert.ok(!err);
       self.db.tearDown();
+      done();
     });
   });
   self.db.tearUp();
@@ -86,7 +87,7 @@ exports['test configDriverOptions'] = function(){
 
 };
 
-exports['test portArray'] = function() {
+exports['test portArray'] = function(done) {
   var self = this;
   self.db = new Database(config.database.host, config.database.port, {native_parser: false});
   self.db.name = "test-fhmongodb-testPort";
@@ -95,6 +96,7 @@ exports['test portArray'] = function() {
     self.db.db.authenticate(config.database.adminauth.user, config.database.adminauth.user, {authSource:"admin"}, function(err, result){
       assert.ok(!err);
       self.db.tearDown();
+      done();
     });
   });
 
@@ -122,7 +124,7 @@ exports['test portArray'] = function() {
 // }
 
 
-exports['test removeAll'] = function () {
+exports['test removeAll'] = function (done) {
   var self = this;
 
   self.db = new Database();
@@ -156,7 +158,7 @@ exports['test removeAll'] = function () {
                 assert.ok(!err, JSON.stringify(err));
                 assert.strictEqual(items.length, 0);
                 self.db.tearDown();
-
+                return done();
               });
             });
           });
@@ -170,7 +172,7 @@ exports['test removeAll'] = function () {
 };
 
 
-exports['test Distinct'] = function () {
+exports['test Distinct'] = function (done) {
 
   var self = this;
   self.db = new Database();
@@ -197,6 +199,7 @@ exports['test Distinct'] = function () {
               assert.ok(!err, JSON.stringify(err));
               assert.strictEqual(items.length, 3, "Invalid items length, expected 3, items was: " + JSON.stringify(items));
                 self.db.tearDown();
+                return done();
             });
           });
         });
@@ -213,7 +216,7 @@ exports['test Distinct'] = function () {
 };
 
 
-exports[ 'test basic database ops' ] = function () {
+exports[ 'test basic database ops' ] = function (done) {
   var foundItems = false;
   var test_collection_name1 = "testcollection1";
   var test_collection_name2 = "testcollection2";
@@ -229,111 +232,117 @@ exports[ 'test basic database ops' ] = function () {
       self.db.dropDatabase(function(err) {
         assert.equal(err, null);
 
-        self.db.removeAll(test_collection_name2, function(err, items) {
-          assert.ok(!err);
-          self.db.create(test_collection_name2, [{
-            id: '1',
-            type: 't1'
-          },{
-            id: '2',
-            type: 't1'
-          },{
-            id: '3',
-            type: 't2'
-          }], function(err, docs) {
-            assert.ok(!err, JSON.stringify(err));
-
-            var query = {
-              keys : ['type'],
-              initial: { count : 0 },
-              reduce: "function (obj, prev) {prev.count++;}"
-            };
-
-            self.db.group(test_collection_name2, query, function (err, results) {
+        async.series([function(cb) {
+          self.db.removeAll(test_collection_name2, function(err, items) {
+            assert.ok(!err);
+            self.db.create(test_collection_name2, [{
+              id: '1',
+              type: 't1'
+            },{
+              id: '2',
+              type: 't1'
+            },{
+              id: '3',
+              type: 't2'
+            }], function(err, docs) {
               assert.ok(!err, JSON.stringify(err));
-              // expected response [{"type":"t1","count":2},{"type":"t2","count":1}]
-              assert.equal(2, results.length);
-              var g0 = results[0];
-              assert.equal('t1', g0.type);
-              assert.equal(2, g0.count);
-              var g1 = results[1];
-              assert.equal('t2', g1.type);
-              assert.equal(1, g1.count);
-            });
-          });
-        });
 
-        self.db.removeAll(test_collection_name1, function(err, items) {
-          assert.equal(err, null);
-          self.db.create(test_collection_name1, {
-            test1 : "test value1",
-            test2 : "test value2"
-          }, function(err, docs) {
-            assert.ok(!err, JSON.stringify(err));
-            self.db.find(test_collection_name1, {}, function(err, items) {
-              assert.ok(!err, JSON.stringify(err));
-              var numItems = items.length;
-              assert.equal(1, numItems);
-              items.forEach(function(item) {
-                foundItems = true;
-                numItems--;
-                if (numItems < 1) {
-                }
+              var query = {
+                keys : ['type'],
+                initial: { count : 0 },
+                reduce: "function (obj, prev) {prev.count++;}"
+              };
+
+              self.db.group(test_collection_name2, query, function (err, results) {
+                assert.ok(!err, JSON.stringify(err));
+                // expected response [{"type":"t1","count":2},{"type":"t2","count":1}]
+                assert.equal(2, results.length);
+                var g0 = results[0];
+                assert.equal('t1', g0.type);
+                assert.equal(2, g0.count);
+                var g1 = results[1];
+                assert.equal('t2', g1.type);
+                assert.equal(1, g1.count);
+                return cb()
               });
             });
+          });
+        }, function(cb) {
+          self.db.removeAll(test_collection_name1, function(err, items) {
+            assert.equal(err, null);
+            self.db.create(test_collection_name1, {
+              test1 : "test value1",
+              test2 : "test value2"
+            }, function(err, docs) {
+              assert.ok(!err, JSON.stringify(err));
+              self.db.find(test_collection_name1, {}, function(err, items) {
+                assert.ok(!err, JSON.stringify(err));
+                var numItems = items.length;
+                assert.equal(1, numItems);
+                items.forEach(function(item) {
+                  foundItems = true;
+                  numItems--;
+                  if (numItems < 1) {
+                  }
+                });
 
-            var tc2 = test_collection_name1 + "2";
-            self.db.collectionExists(test_collection_name1, function(err, exists) {
-              assert.equal(exists, true);
-              self.db.createCollectionWithIndex(tc2, 'MD5', function(err) {
-                assert.equal(err, null);
-                async.series([
-                  function (cb) {
-                    self.db.countCollection(test_collection_name1,
-                      function(err, count) {
-                        assert.equal(count, 1);
+
+              });
+
+              var tc2 = test_collection_name1 + "2";
+              self.db.collectionExists(test_collection_name1, function(err, exists) {
+                assert.equal(exists, true);
+                self.db.createCollectionWithIndex(tc2, 'MD5', function(err) {
+                  assert.equal(err, null);
+                  async.series([
+                    function (cb) {
+                      self.db.countCollection(test_collection_name1,
+                        function(err, count) {
+                          assert.equal(count, 1);
+                          return cb();
+                        });
+                    },
+                    function(cb) {
+                      self.db.collectionNames(function(err, names) {
+                        assert.notEqual(names.length, 0);
                         return cb();
                       });
-                  },
-                  function(cb) {
-                    self.db.collectionNames(function(err, names) {
-                      assert.notEqual(names.length, 0);
-                      return cb();
+                    },
+                    function(cb) {
+                      self.db.findOne(test_collection_name1, {
+                        test1 : 'test value1'
+                      }, {}, function(err, item) {
+                        assert.equal(item.test1, 'test value1');
+                        return cb();
                     });
-                  },
-                  function(cb) {
-                    self.db.findOne(test_collection_name1, {
-                      test1 : 'test value1'
-                    }, {}, function(err, item) {
-                      assert.equal(item.test1, 'test value1');
-                      return cb();
+                    }, function(cb) {
+                      self.db.dropCollection(test_collection_name1, function(err, item) {
+                        assert.equal(err, null);
+                        return cb();
+                      });
+                    }, function(cb) {
+                      self.db.collectionExists(test_collection_name1, function(err, exists) {
+                        assert.equal(exists, false);
+                        return cb();
+                      });
+                    }
+                  ], function(err, results) {
+                    self.db.tearDown();
+                    assert.ok(!err);
+                    return cb();
                   });
-                  }, function(cb) {
-                    self.db.dropCollection(test_collection_name1, function(err, item) {
-                      assert.equal(err, null);
-                      return cb();
-                    });
-                  }, function(cb) {
-                    self.db.collectionExists(test_collection_name1, function(err, exists) {
-                      assert.equal(exists, false);
-                      return cb();
-                    });
-                  }
-                ], function(err, results) {
-                  self.db.tearDown();
-                  assert.ok(!err);
                 });
               });
             });
           });
-        });
+        }], done);
       });
     });
   }
   self.db.tearUp();
 };
 
-exports[ 'test update and delete item with an id that is not hex' ] = function () {
+exports[ 'test update and delete item with an id that is not hex' ] = function (done) {
   var test_collection_name = "testcollection_forinvaliddocid";
   var self = this;
   self.db = new Database();
@@ -400,6 +409,7 @@ exports[ 'test update and delete item with an id that is not hex' ] = function (
             ], function(err, results) {
               self.db.tearDown();
               assert.ok(!err);
+              return done();
             });
           });
         });

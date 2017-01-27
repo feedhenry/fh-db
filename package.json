@@ -12,7 +12,7 @@
     "lib": "./lib/"
   },
   "scripts": {
-    "test": "expresso -I lib",
+    "test": "grunt fh:unit",
     "version": "sed -i.bak \"s/sonar.projectVersion=.*/sonar.projectVersion=${npm_package_version}/\" sonar-project.properties && rm sonar-project.properties.bak && git add sonar-project.properties"
   },
   "engines": {
