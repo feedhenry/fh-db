@@ -418,3 +418,25 @@ exports[ 'test update and delete item with an id that is not hex' ] = function (
   }
   self.db.tearUp();
 };
+
+exports['test getMongoClient'] = function (done) {
+  var test_collection_name = 'testcollection_getMongoClient';
+  var self = this;
+  self.db = new Database();
+  self.db.name = 'test-fhmongodb-database';
+
+  self.db.on('tearUp', do_ops);
+  // Should be null before tearUp.
+  assert(!self.db.getMongoClient());
+
+  function do_ops() {
+    self.db.db.authenticate(config.database.adminauth.user, config.database.adminauth.user, { authSource: 'admin' }, function(err, result) {
+      // Should not be null after tearUp.
+      assert(self.db.db, self.db.getMongoClient());
+
+      done();
+    });
+  }
+
+  self.db.tearUp();
+};
