@@ -238,6 +238,21 @@ function createTestData(cfg, testTopic, callback) {
   db.tearUp(cfg.database.auth);
 };
 
+function getDocs(collection, checkDocs) {
+  var params = {
+    "__fhdb" : test_fhdb_name,
+    "__dbperapp": useOwnDatabase,
+    "type" : collection
+  };
+
+  ditch.doGetCollectionInstance(params, function(err, collection) {
+    collection.find().toArray(function(err, docs) {
+      assert.ok(!err);
+      checkDocs(err,docs);
+    });
+  });
+}
+
 
 var testCollectionOwnAppDatabase = function(cb){
 
@@ -380,6 +395,7 @@ var testBasicOperationsOwnDatabase = function(cb){
                   testRead,
                   testUpdate,
                   testImport,
+                  testImportMacOS,
                   testExport,
                   testDelete,
                   testListCollections,
@@ -1156,6 +1172,7 @@ var testExport = function(created, cb) {
 
 var testImport = function(created, cb) {
   logger.info("test testImport()");
+
   ditch.doImport({
     "__fhdb" : test_fhdb_name,
     collections : test_import_data,
@@ -1172,8 +1189,68 @@ var testImport = function(created, cb) {
     assert.ok(res);
     assert.ok(res.ok);
     assert.ok(res.imported);
+    assert.ok(res.imported.length === 2);
     assert.ok(res.imported.indexOf('fruit')>-1);
-    return cb(undefined, created);
+    assert.ok(res.imported.indexOf('veg')>-1);
+
+    async.series([
+      function(callback) {
+        getDocs('fruit', function(err, docs) {
+          assert.equal(docs.length,1);
+          assert.equal(docs[0].name,'plums');
+
+          callback(err);
+        });
+      },
+      function(callback) {
+        getDocs('veg', function(err, docs) {
+          assert.equal(docs.length,2);
+          assert.equal(docs[0].field,'onions');
+          assert.equal(docs[1].field,'carrots');
+
+          callback(err);
+        });
+      }
+    ], function (err) {
+      assert.ok(!err);
+      return cb(undefined, created);
+    });
+  });
+};
+
+var testImportMacOS = function(created, cb) {
+  logger.info("test testImport()");
+
+  ditch.doImport({
+    "__fhdb" : test_fhdb_name,
+    collections : test_import_data,
+    filename : 'import-MacOS.zip',
+    files : {
+      toimport : {
+        path : __dirname + '/fixtures/import-MacOS.zip',
+        name : 'import-MacOS.zip'
+      }
+    },
+    "__dbperapp" : useOwnDatabase
+  }, function(err, res) {
+    assert.ok(!err);
+    assert.ok(res);
+    assert.ok(res.ok);
+    assert.ok(res.imported);
+    assert.ok(res.imported.length === 3);
+    assert.ok(res.imported.indexOf('collection01')>-1);
+    assert.ok(res.imported.indexOf('collection02')>-1);
+    assert.ok(res.imported.indexOf('collection03')>-1);
+
+    getDocs('collection01', function(err, docs) {
+      assert.ok(!err);
+      assert.equal(docs.length,3);
+      assert.equal(docs[0].field,'value01');
+      assert.equal(docs[1].field,'value02');
+      assert.equal(docs[2].field,'value03');
+
+      return cb(undefined, created);
+    });
   });
 };
 
@@ -1278,6 +1355,7 @@ exports.testDbActions = function(done) {
         testRead,
         testUpdate,
         testImport,
+        testImportMacOS,
         testExport,
         testListCollections,
         testDelete,
