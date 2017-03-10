@@ -1,6 +1,6 @@
 {
   "name": "fh-db",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "dependencies": {
     "adm-zip": {
       "version": "0.4.7",
