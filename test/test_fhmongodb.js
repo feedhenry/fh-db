@@ -93,7 +93,7 @@ exports['test portArray'] = function(done) {
   self.db.name = "test-fhmongodb-testPort";
 
   self.db.on("tearUp", function(){
-    self.db.db.authenticate(config.database.adminauth.user, config.database.adminauth.user, {authSource:"admin"}, function(err, result){
+    self.db.db.authenticate(config.database.adminauth.user, config.database.adminauth.pass, {authSource:"admin"}, function(err, result){
       assert.ok(!err);
       self.db.tearDown();
       done();
@@ -105,24 +105,21 @@ exports['test portArray'] = function(done) {
 
 };
 
-// TODO: fix this.
-//
-// exports['test hostStringArray'] = function() {
-//   var self = this;
-//   self.db = new Database(host_string_array_config.database.host, host_string_array_config.database.port, {native_parser: false});
-//   self.db.name = "test-fhmongodb-testPort";
+exports['test hostStringArray'] = function() {
+  var self = this;
+  self.db = new Database(host_string_array_config.database.host, host_string_array_config.database.port, {native_parser: false});
+  self.db.name = "test-fhmongodb-testHostStringArray";
 
-//   self.db.on("tearUp", function(){
-//     self.db.db.authenticate(host_string_array_config.database.adminauth.user, host_string_array_config.database.adminauth.user,{authSource:"admin"}, function(err, result){
-//       assert.isNull(err);
+  self.db.on("tearUp", function(){
+    self.db.db.authenticate(host_string_array_config.database.adminauth.user, host_string_array_config.database.adminauth.pass,{authSource:"admin"}, function(err, result){
+      assert.isNull(err);
 
-//       self.db.tearDown();
-//     });
-//   });
+      self.db.tearDown();
+    });
+  });
 
-//   self.db.tearUp();
-// }
-
+  self.db.tearUp();
+};
 
 exports['test removeAll'] = function (done) {
   var self = this;
@@ -349,7 +346,7 @@ exports[ 'test update and delete item with an id that is not hex' ] = function (
   self.db.name = "test-fhmongodb-database";
 
   self.db.on('tearUp', do_ops);
-  
+
   var sampleData = { _id : "foobar", test2 : "test value2"};
 
   function do_ops() {
@@ -357,13 +354,13 @@ exports[ 'test update and delete item with an id that is not hex' ] = function (
       assert.ok(!err);
       self.db.dropDatabase(function(err) {
         assert.equal(err, null);
-      
+
         self.db.removeAll(test_collection_name, function(err, items) {
           assert.equal(err, null);
-        
+
           self.db.create(test_collection_name, sampleData, function(err, docs) {
             assert.ok(!err, JSON.stringify(err));
-         
+
             async.series([
               function(cb){
                 self.db.find(test_collection_name, {"_id": sampleData._id}, function(err, items) {
