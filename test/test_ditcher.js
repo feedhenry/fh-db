@@ -412,7 +412,6 @@ var testBasicOperationsOwnDatabase = function(cb){
                   testList9,
                   testList10,
                   testList11,
-                  testList12,
                   testListLimit,
                   testListSkip,
                   testListSort,
@@ -586,7 +585,7 @@ var testList1 = function(cb) {
     "__fhdb" : test_fhdb_name,
     "type" : "fh_test_list",
     "eq" : {
-      "foo" : "foo"
+      "foo" : {value: "foo", type: "String"}
     }
   };
 
@@ -609,7 +608,7 @@ var testList2 = function (cb) {
     "__fhdb" : test_fhdb_name,
     "type" : "fh_test_list",
     "ne" : {
-      "foo" : "foo"
+      "foo": { value: "foo", type: "String" }
     }
   };
 
@@ -630,7 +629,7 @@ var testList3 = function (cb) {
     "__fhdb" : test_fhdb_name,
     "type" : "fh_test_list",
     "gt" : {
-      "num2" : 400
+      "num2" : {value: 400, type: "Number"}
     }
   };
 
@@ -651,7 +650,7 @@ var testList4 = function (cb) {
     "__fhdb" : test_fhdb_name,
     "type" : "fh_test_list",
     "ge" : {
-      "num2" : 400
+      "num2": { value: 400, type: "Number" }
     }
   };
 
@@ -672,7 +671,7 @@ var testList5 = function(cb) {
     "__fhdb" : test_fhdb_name,
     "type" : "fh_test_list",
     "lt" : {
-      "num2" : 400
+      "num2": { value: 400, type: "Number" }
     }
   };
 
@@ -693,7 +692,7 @@ var testList6 = function(cb) {
     "__fhdb" : test_fhdb_name,
     "type" : "fh_test_list",
     "le" : {
-      "num2" : 400
+      "num2": { value: 400, type: "Number" }
     }
   };
 
@@ -715,7 +714,7 @@ var testList7 = function(cb) {
     "__fhdb" : test_fhdb_name,
     "type" : "fh_test_list",
     "like" : {
-      "liker" : "^123$"
+      "liker" : {value: "^123$", type: "String"}
     }
   };
 
@@ -738,7 +737,7 @@ var testList8 = function(cb) {
     "__fhdb" : test_fhdb_name,
     "type" : "fh_test_list",
     "like" : {
-      "liker" : "123"
+      "liker" : {value: "123", type: "String"}
     }
   };
 
@@ -760,7 +759,7 @@ var testList9 = function(cb) {
     "__fhdb" : test_fhdb_name,
     "type" : "fh_test_list",
     "like" : {
-      "liker" : "def"
+      "liker" : {value: "def", type: "String"}
     }
   };
 
@@ -782,7 +781,7 @@ var testList10 = function(cb) {
     "__fhdb" : test_fhdb_name,
     "type" : "fh_test_list",
     "like" : {
-      "liker" : "def$"
+      "liker" : {value: "def$", type: "String"}
     }
   };
 
@@ -806,11 +805,11 @@ var testList11 = function (cb) {
     "__fhdb" : test_fhdb_name,
     "type" : "fh_test_list",
     "gt" : {
-      "num1" : 100,
-      "num2" : 400
+      "num1" : {value: 100, type: "Number"},
+      "num2" : {value: 400, type: "Number"}
     },
     "lt" : {
-      "num1" : 130
+      "num1" : {value: 130, type: "Number"}
     }
   };
 
@@ -824,29 +823,6 @@ var testList11 = function (cb) {
     cb();
   });
 };
-
-var testList12 = function (cb){
-  logger.info("test testList12()");
-
-
-  var doListRequest = {
-    "__fhdb": test_fhdb_name,
-    "type": 'fh_test_list',
-    "in" : {
-      "num1": [100, 110, 120],
-      "liker": ['123', 'abcdef']
-    }
-  };
-
-  if(useOwnDatabase){
-    doListRequest.__dbperapp = true;
-  }
-
-  ditch.doList(doListRequest, function (err, listInRes) {
-      assert.equal(listInRes.length, 2);
-      cb();
-  });
-}
 
 var testListLimit = function (cb){
   logger.info("test testListLimit()");
@@ -1372,7 +1348,6 @@ exports.testDbActions = function(done) {
         testList9,
         testList10,
         testList11,
-        testList12,
         testBadCreate,
         testBadCreateNoFields,
         testBadCreate2,
