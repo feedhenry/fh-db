@@ -261,35 +261,7 @@ var testReplicaIncorrectPassword = function (cb) {
 }
 
 var testparseMongoConnectionString = function (cb) {
-
   var localdb = require("../lib/localdb.js");
-
-  function testBadStrings(cb) {
-    var noPassword = "mongodb://user2@localhost:27017,localhost:27017/someReplicaApp";
-    var noUser = "mongodb://pass2@localhost:27017,localhost:27017/someReplicaApp";
-    var noUserOrPassword = "mongodb://localhost:27017,localhost:27017/someReplicaApp";
-    var noDatabase = "mongodb://user2:pass2@localhost:27017,localhost:27017";
-    var noHosts = "mongodb://user2:pass2@/someReplicaApp";
-    var garbage = "afgadf ga dfg adfg adfg asd ag:;;////";
-    var nothing = "";
-    var badOptions = "mongodb://user2:pass2@localhost:27017,localhost:27017/someReplicaApp?something=";
-    var multipleBadOptions = "mongodb://user2:pass2@localhost:27017,localhost:27017/someReplicaApp?something=,someOtherOption";
-    var multipleSameOptions = "mongodb://user2:pass2@localhost:27017,localhost:27017/someReplicaApp?something=something1,something=something2";
-
-    var testBadArray = [noPassword, noUser, noUserOrPassword, noDatabase, noHosts, garbage, nothing, badOptions, multipleBadOptions, multipleSameOptions];
-
-
-    async.eachSeries(testBadArray, function (testString, cb) {
-      console.log("Testing string " + testString);
-      assert.throws(function () {
-        localdb.parseMongoConnectionURL(testString)
-      }, Error);
-      cb();
-    }, function () {
-
-      cb();
-    });
-  }
 
   function testGoodStrings(cb) {
     var goodSingle = "mongodb://user2:pass2@localhost:27017/someReplicaApp";
@@ -317,25 +289,56 @@ var testparseMongoConnectionString = function (cb) {
 
     async.eachSeries(testGoodArray, function (testString, cb) {
       var compareVal = undefined;
-      console.log("Testing string " + testString);
+
       assert.doesNotThrow(function () {
         compareVal = localdb.parseMongoConnectionURL(testString)
-      });
+      }, `parsing string "${testString}" should be successful`);
+
       assert.ok(compareVal);
+
       cb();
-    }, function () {
-      cb();
+    }, function (e) {
+      cb(e);
     });
   }
 
-  async.series([testBadStrings, testGoodStrings], function () {
+  async.series([testGoodStrings], function () {
     cb();
   });
 };
 
+exports['test errors should be thrown for invalid connection strings'] = function () {
+
+  var BAD_STRINGS = {
+    MISSING_AUTH_SECTION: 'mongodb://user2@localhost:27017,localhost:27017/someReplicaApp',
+    NO_DATABASE: 'mongodb://user2:pass2@localhost:27017,localhost:27017',
+    NO_HOST: 'mongodb://user2:pass2@/someReplicaApp',
+    GARBAGE: 'afgadf ga dfg adfg adfg asd ag:;;////',
+    NOTHING: '',
+
+    // TODO - It's probably more worthwhile to check that a required option exists or not in the below tests?
+    // TODO - Perhaps check options against a whitelist?
+
+    // TODO - This is a valid querystring and results in { something: '' }
+    // BAD_OPTIONS: 'mongodb://user2:pass2@localhost:27017,localhost:27017/someReplicaApp?something=',
+
+    // TODO - This is actually a valid querystring and results in { something: ',someOtherOption' }
+    // MULTIPLE_BAD_OPTIONS: 'mongodb://user2:pass2@localhost:27017,localhost:27017/someReplicaApp?something=,someOtherOption',
+    
+    // TODO - In theory arrays can be in a query so this is valid
+    // DUPLICATE_OPTIONS: 'mongodb://user2:pass2@localhost:27017,localhost:27017/someReplicaApp?something=something1&something=something2'
+  };
+
+  Object.keys(BAD_STRINGS).forEach(function (key) {
+    assert.throws(
+      () => localdb.parseMongoConnectionURL(BAD_STRINGS[key]),
+      Error,
+      `Expected an error to be thrown for BAD_STRINGS.${key} ("${BAD_STRINGS[key]}")`
+    );
+  });
+}
 
 exports['test local and remote'] = function (done) {
-
   async.series([
     testLocalMongoInstance,
     testSingleMongoInstance,
@@ -344,11 +347,5 @@ exports['test local and remote'] = function (done) {
     testparseMongoConnectionString,
     testReplicaIncorrectPassword,
     testparseMongoConnectionString
-    ],
-    function (err) {
-      assert.ok(!err);
-      return done();
-  });
-
-
+  ], done);
 } 
