@@ -1,6 +1,7 @@
 var assert = require("assert");
 var async = require("async");
-
+var proxyquire = require('proxyquire').noPreserveCache();
+var env = require('env-var');
 var mongodb = require("mongodb");
 var MongoClient = mongodb.MongoClient;
 var Server = mongodb.Server;
@@ -13,6 +14,8 @@ var createRequestRemote = {"__dbperapp": "someRemoteApp", "__fhdb": "someRemoteA
 var createRequestReplica = {"__dbperapp": "someRemoteApp", "__fhdb": "someReplicaApp", "act": "create", "type": "ReplicaType", "fields": [
   {"_id": 1, "ReplicaField1": "ReplicaField1Data"}
 ]};
+
+var LOCAL_URL = 'mongodb://localhost:27017/FH_LOCAL';
 
 var testLocalMongoInstance = function (cb) {
 
@@ -308,6 +311,7 @@ var testparseMongoConnectionString = function (cb) {
 };
 
 exports['test errors should be thrown for invalid connection strings'] = function () {
+  var localdb = require("../lib/localdb.js");
 
   var BAD_STRINGS = {
     MISSING_AUTH_SECTION: 'mongodb://user2@localhost:27017,localhost:27017/someReplicaApp',
@@ -336,6 +340,28 @@ exports['test errors should be thrown for invalid connection strings'] = functio
       `Expected an error to be thrown for BAD_STRINGS.${key} ("${BAD_STRINGS[key]}")`
     );
   });
+}
+
+exports['should not require auth string when run locally'] = function () {
+  var utils = proxyquire('../lib/utils.js', {
+    'env-var': env.mock({
+      'FH_USE_LOCAL_DB': 'true'
+    })
+  });
+
+  assert.doesNotThrow(
+    () => utils.parseMongoConnectionURL(LOCAL_URL),
+    `parseMongoConnectioURL should not throw for ${LOCAL_URL} when FH_USE_LOCAL_DB is true`
+  );
+}
+
+exports['should require auth string when run on RHMAP'] = function () {
+  var utils = require('../lib/utils.js');
+
+  assert.throws(
+    () => localdb.parseMongoConnectionURL(LOCAL_URL),
+    `parseMongoConnectioURL should not throw for ${LOCAL_URL} when FH_USE_LOCAL_DB is falsy`
+  );
 }
 
 exports['test local and remote'] = function (done) {
