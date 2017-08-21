@@ -17,8 +17,7 @@ var createRequestReplica = {"__dbperapp": "someRemoteApp", "__fhdb": "someReplic
 
 var LOCAL_URL = 'mongodb://localhost:27017/FH_LOCAL';
 
-var testLocalMongoInstance = function (cb) {
-
+exports['test local mongo instance'] = function (cb) {
   assert.ok(!process.env['FH_MONGODB_CONN_URL']);
 
   var localdb = require("../lib/localdb.js");
@@ -68,7 +67,7 @@ var testLocalMongoInstance = function (cb) {
   });
 }
 
-var testSingleMongoInstance = function (cb) {
+exports['test single mongo instance'] = function (cb) {
 
 
   console.log('test local database single mongo instance');
@@ -128,7 +127,7 @@ var testSingleMongoInstance = function (cb) {
 }
 
 
-var testReplicaMongoInstance = function (cb) {
+exports['test replica instance usage'] = function (cb) {
 
   console.log('test local database replica mongo instance');
   process.env['FH_MONGODB_CONN_URL'] = "mongodb://user2:pass2@localhost:27017,localhost:27017/someReplicaApp";
@@ -187,7 +186,7 @@ var testReplicaMongoInstance = function (cb) {
   });
 }
 
-var testReplicaIncorrectUser = function (cb) {
+exports['test replica with invalid auth string'] = function (cb) {
 
   console.log('test local database replica mongo instance');
   process.env['FH_MONGODB_CONN_URL'] = "mongodb://:pass2@localhost:27017,localhost:27017/someReplicaApp";
@@ -225,45 +224,7 @@ var testReplicaIncorrectUser = function (cb) {
   });
 }
 
-var testReplicaIncorrectPassword = function (cb) {
-
-  console.log('test local database replica mongo instance');
-  process.env['FH_MONGODB_CONN_URL'] = "mongodb://user2:@localhost:27017,localhost:27017/someReplicaApp";
-  var localdb = require("../lib/localdb.js");
-  var local_db = localdb.local_db;
-  var local_db_replica_mongo_string = local_db;
-  //Setting no environment variable, should default to localhost
-
-  console.log('test local database no mongo string');
-  MongoClient.connect("mongodb://admin:admin@localhost:27017/admin?fsync=true", {}, function(err, db){
-    var targetDb = db.db("someReplicaApp");
-
-    targetDb.dropDatabase(function (err, result) {
-      assert.ok(!err);
-
-      targetDb.removeUser('user2', function(){
-        targetDb.addUser("user2", "pass2", {roles: ['readWrite']}, function (err, result) {
-          assert.ok(!err);
-          targetDb.close();
-
-
-          assert.ok(process.env['FH_MONGODB_CONN_URL']);
-          local_db_replica_mongo_string(createRequestReplica, function (err, result) {
-            assert.ok(err);
-            assert.ok(!result);
-
-            assert.equal(err.message, "Incorrect format for database connection string.");
-            localdb.tearDownDitch();
-            cb();
-          });
-        });
-      });
-
-    });
-  });
-}
-
-var testparseMongoConnectionString = function (cb) {
+exports['test connection string parsing'] = function (cb) {
   var localdb = require("../lib/localdb.js");
 
   function testGoodStrings(cb) {
@@ -318,19 +279,7 @@ exports['test errors should be thrown for invalid connection strings'] = functio
     NO_DATABASE: 'mongodb://user2:pass2@localhost:27017,localhost:27017',
     NO_HOST: 'mongodb://user2:pass2@/someReplicaApp',
     GARBAGE: 'afgadf ga dfg adfg adfg asd ag:;;////',
-    NOTHING: '',
-
-    // TODO - It's probably more worthwhile to check that a required option exists or not in the below tests?
-    // TODO - Perhaps check options against a whitelist?
-
-    // TODO - This is a valid querystring and results in { something: '' }
-    // BAD_OPTIONS: 'mongodb://user2:pass2@localhost:27017,localhost:27017/someReplicaApp?something=',
-
-    // TODO - This is actually a valid querystring and results in { something: ',someOtherOption' }
-    // MULTIPLE_BAD_OPTIONS: 'mongodb://user2:pass2@localhost:27017,localhost:27017/someReplicaApp?something=,someOtherOption',
-    
-    // TODO - In theory arrays can be in a query so this is valid
-    // DUPLICATE_OPTIONS: 'mongodb://user2:pass2@localhost:27017,localhost:27017/someReplicaApp?something=something1&something=something2'
+    NOTHING: ''
   };
 
   Object.keys(BAD_STRINGS).forEach(function (key) {
@@ -363,15 +312,3 @@ exports['should require auth string when run on RHMAP'] = function () {
     `parseMongoConnectioURL should not throw for ${LOCAL_URL} when FH_USE_LOCAL_DB is falsy`
   );
 }
-
-exports['test local and remote'] = function (done) {
-  async.series([
-    testLocalMongoInstance,
-    testSingleMongoInstance,
-    testReplicaMongoInstance,
-    testReplicaIncorrectUser,
-    testparseMongoConnectionString,
-    testReplicaIncorrectPassword,
-    testparseMongoConnectionString
-  ], done);
-} 
