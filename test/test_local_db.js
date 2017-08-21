@@ -91,6 +91,7 @@ exports['test single mongo instance'] = function (cb) {
 
           assert.ok(process.env['FH_MONGODB_CONN_URL']);
           local_db_single_mongo_string(createRequestRemote, function (err, result) {
+            console.log('xxx', err);
             assert.ok(!err);
 
             assert.equal(JSON.stringify(result.fields), JSON.stringify({"RemoteField1": "RemoteField1Data"}));
@@ -213,7 +214,7 @@ exports['test replica with invalid auth string'] = function (cb) {
             assert.ok(err);
             assert.ok(!result);
 
-            assert.equal(err.message, "Incorrect format for database connection string.");
+            assert.equal(err.message, "Error parsing database connection string - verify format. AssertionError: mongodb username was missing in connection string");
             localdb.tearDownDitch();
             cb();
 
