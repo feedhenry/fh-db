@@ -1,6 +1,7 @@
 var assert = require("assert");
 var async = require("async");
-
+var proxyquire = require('proxyquire').noPreserveCache();
+var env = require('env-var');
 var mongodb = require("mongodb");
 var MongoClient = mongodb.MongoClient;
 var Server = mongodb.Server;
@@ -14,8 +15,9 @@ var createRequestReplica = {"__dbperapp": "someRemoteApp", "__fhdb": "someReplic
   {"_id": 1, "ReplicaField1": "ReplicaField1Data"}
 ]};
 
-var testLocalMongoInstance = function (cb) {
+var LOCAL_URL = 'mongodb://localhost:27017/FH_LOCAL';
 
+exports['test local mongo instance'] = function (cb) {
   assert.ok(!process.env['FH_MONGODB_CONN_URL']);
 
   var localdb = require("../lib/localdb.js");
@@ -65,7 +67,7 @@ var testLocalMongoInstance = function (cb) {
   });
 }
 
-var testSingleMongoInstance = function (cb) {
+exports['test single mongo instance'] = function (cb) {
 
 
   console.log('test local database single mongo instance');
@@ -89,6 +91,7 @@ var testSingleMongoInstance = function (cb) {
 
           assert.ok(process.env['FH_MONGODB_CONN_URL']);
           local_db_single_mongo_string(createRequestRemote, function (err, result) {
+            console.log('xxx', err);
             assert.ok(!err);
 
             assert.equal(JSON.stringify(result.fields), JSON.stringify({"RemoteField1": "RemoteField1Data"}));
@@ -125,7 +128,7 @@ var testSingleMongoInstance = function (cb) {
 }
 
 
-var testReplicaMongoInstance = function (cb) {
+exports['test replica instance usage'] = function (cb) {
 
   console.log('test local database replica mongo instance');
   process.env['FH_MONGODB_CONN_URL'] = "mongodb://user2:pass2@localhost:27017,localhost:27017/someReplicaApp";
@@ -184,7 +187,7 @@ var testReplicaMongoInstance = function (cb) {
   });
 }
 
-var testReplicaIncorrectUser = function (cb) {
+exports['test replica with invalid auth string'] = function (cb) {
 
   console.log('test local database replica mongo instance');
   process.env['FH_MONGODB_CONN_URL'] = "mongodb://:pass2@localhost:27017,localhost:27017/someReplicaApp";
@@ -211,7 +214,7 @@ var testReplicaIncorrectUser = function (cb) {
             assert.ok(err);
             assert.ok(!result);
 
-            assert.equal(err.message, "Incorrect format for database connection string.");
+            assert.equal(err.message, "Error parsing database connection string - verify format. AssertionError: mongodb username was missing in connection string");
             localdb.tearDownDitch();
             cb();
 
@@ -222,74 +225,8 @@ var testReplicaIncorrectUser = function (cb) {
   });
 }
 
-var testReplicaIncorrectPassword = function (cb) {
-
-  console.log('test local database replica mongo instance');
-  process.env['FH_MONGODB_CONN_URL'] = "mongodb://user2:@localhost:27017,localhost:27017/someReplicaApp";
+exports['test connection string parsing'] = function (cb) {
   var localdb = require("../lib/localdb.js");
-  var local_db = localdb.local_db;
-  var local_db_replica_mongo_string = local_db;
-  //Setting no environment variable, should default to localhost
-
-  console.log('test local database no mongo string');
-  MongoClient.connect("mongodb://admin:admin@localhost:27017/admin?fsync=true", {}, function(err, db){
-    var targetDb = db.db("someReplicaApp");
-
-    targetDb.dropDatabase(function (err, result) {
-      assert.ok(!err);
-
-      targetDb.removeUser('user2', function(){
-        targetDb.addUser("user2", "pass2", {roles: ['readWrite']}, function (err, result) {
-          assert.ok(!err);
-          targetDb.close();
-
-
-          assert.ok(process.env['FH_MONGODB_CONN_URL']);
-          local_db_replica_mongo_string(createRequestReplica, function (err, result) {
-            assert.ok(err);
-            assert.ok(!result);
-
-            assert.equal(err.message, "Incorrect format for database connection string.");
-            localdb.tearDownDitch();
-            cb();
-          });
-        });
-      });
-
-    });
-  });
-}
-
-var testparseMongoConnectionString = function (cb) {
-
-  var localdb = require("../lib/localdb.js");
-
-  function testBadStrings(cb) {
-    var noPassword = "mongodb://user2@localhost:27017,localhost:27017/someReplicaApp";
-    var noUser = "mongodb://pass2@localhost:27017,localhost:27017/someReplicaApp";
-    var noUserOrPassword = "mongodb://localhost:27017,localhost:27017/someReplicaApp";
-    var noDatabase = "mongodb://user2:pass2@localhost:27017,localhost:27017";
-    var noHosts = "mongodb://user2:pass2@/someReplicaApp";
-    var garbage = "afgadf ga dfg adfg adfg asd ag:;;////";
-    var nothing = "";
-    var badOptions = "mongodb://user2:pass2@localhost:27017,localhost:27017/someReplicaApp?something=";
-    var multipleBadOptions = "mongodb://user2:pass2@localhost:27017,localhost:27017/someReplicaApp?something=,someOtherOption";
-    var multipleSameOptions = "mongodb://user2:pass2@localhost:27017,localhost:27017/someReplicaApp?something=something1,something=something2";
-
-    var testBadArray = [noPassword, noUser, noUserOrPassword, noDatabase, noHosts, garbage, nothing, badOptions, multipleBadOptions, multipleSameOptions];
-
-
-    async.eachSeries(testBadArray, function (testString, cb) {
-      console.log("Testing string " + testString);
-      assert.throws(function () {
-        localdb.parseMongoConnectionURL(testString)
-      }, Error);
-      cb();
-    }, function () {
-
-      cb();
-    });
-  }
 
   function testGoodStrings(cb) {
     var goodSingle = "mongodb://user2:pass2@localhost:27017/someReplicaApp";
@@ -317,38 +254,62 @@ var testparseMongoConnectionString = function (cb) {
 
     async.eachSeries(testGoodArray, function (testString, cb) {
       var compareVal = undefined;
-      console.log("Testing string " + testString);
+
       assert.doesNotThrow(function () {
         compareVal = localdb.parseMongoConnectionURL(testString)
-      });
+      }, `parsing string "${testString}" should be successful`);
+
       assert.ok(compareVal);
+
       cb();
-    }, function () {
-      cb();
+    }, function (e) {
+      cb(e);
     });
   }
 
-  async.series([testBadStrings, testGoodStrings], function () {
+  async.series([testGoodStrings], function () {
     cb();
   });
 };
 
+exports['test errors should be thrown for invalid connection strings'] = function () {
+  var localdb = require("../lib/localdb.js");
 
-exports['test local and remote'] = function (done) {
+  var BAD_STRINGS = {
+    MISSING_AUTH_SECTION: 'mongodb://user2@localhost:27017,localhost:27017/someReplicaApp',
+    NO_DATABASE: 'mongodb://user2:pass2@localhost:27017,localhost:27017',
+    NO_HOST: 'mongodb://user2:pass2@/someReplicaApp',
+    GARBAGE: 'afgadf ga dfg adfg adfg asd ag:;;////',
+    NOTHING: ''
+  };
 
-  async.series([
-    testLocalMongoInstance,
-    testSingleMongoInstance,
-    testReplicaMongoInstance,
-    testReplicaIncorrectUser,
-    testparseMongoConnectionString,
-    testReplicaIncorrectPassword,
-    testparseMongoConnectionString
-    ],
-    function (err) {
-      assert.ok(!err);
-      return done();
+  Object.keys(BAD_STRINGS).forEach(function (key) {
+    assert.throws(
+      () => localdb.parseMongoConnectionURL(BAD_STRINGS[key]),
+      Error,
+      `Expected an error to be thrown for BAD_STRINGS.${key} ("${BAD_STRINGS[key]}")`
+    );
+  });
+}
+
+exports['should not require auth string when run locally'] = function () {
+  var utils = proxyquire('../lib/utils.js', {
+    'env-var': env.mock({
+      'FH_USE_LOCAL_DB': 'true'
+    })
   });
 
+  assert.doesNotThrow(
+    () => utils.parseMongoConnectionURL(LOCAL_URL),
+    `parseMongoConnectioURL should not throw for ${LOCAL_URL} when FH_USE_LOCAL_DB is true`
+  );
+}
 
-} 
+exports['should require auth string when run on RHMAP'] = function () {
+  var utils = require('../lib/utils.js');
+
+  assert.throws(
+    () => localdb.parseMongoConnectionURL(LOCAL_URL),
+    `parseMongoConnectioURL should not throw for ${LOCAL_URL} when FH_USE_LOCAL_DB is falsy`
+  );
+}
