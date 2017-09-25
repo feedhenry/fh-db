@@ -8,7 +8,7 @@ var lodash = require("lodash");
 
 var config = {
   "database" : {
-    "host" : "localhost",
+    "host" : `${process.env.MONGODB_HOST || "localhost"}`,
     "port" : 27017,
     "name" : "fh_ditch_test",
     "adminauth" : {
@@ -26,7 +26,7 @@ var config = {
 //It is possible to create an array of ports as part of a replica set connection
 var port_array_config = {
   "database" : {
-    "host" : ["localhost"],
+    "host" : [`${process.env.MONGODB_HOST || "localhost"}`],
     "port" : [27017],
     "name" : "fh_ditch_test",
     "adminauth" : {
@@ -43,7 +43,7 @@ var port_array_config = {
 
 var host_string_array_config = {
   "database" : {
-    "host" : "localhost,127.0.0.1",
+    "host" : `${process.env.MONGODB_HOST || "localhost"},127.0.0.1`,
     "port" : 27017,
     "name" : "fh_ditch_test",
     "adminauth" : {
@@ -60,7 +60,7 @@ var host_string_array_config = {
 
 exports['test Authentication'] = function(done) {
   var self = this;
-  self.db = new Database();
+  self.db = new Database(config.database.host, config.database.port, null);
   self.db.name = "admin";
   self.db.on('tearUp', function(){
     self.db.db.authenticate(config.database.adminauth.user, config.database.adminauth.pass, {authSource: 'admin'}, function(err, result) {

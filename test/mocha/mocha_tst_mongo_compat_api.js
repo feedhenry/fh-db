@@ -11,6 +11,7 @@ var TEST_DB_NAME = "testDB-123412341234123412341234-API";
 var TEST_COL_NAME = "test_mongo_compat_api_col";
 
 config.database.name = TEST_DB_NAME;
+config.database.host = process.env.MONGODB_HOST || config.database.host;
 
 var api = null;
 var db = null;
@@ -48,7 +49,7 @@ describe(" (db per app: " + DB_PER_APP + ")", function () {
       createApi({
         __fhdb: TEST_DB_NAME,
         __dbperapp: DB_PER_APP,
-        connectionUrl: DB_PER_APP ? "mongodb://localhost:27017" : undefined
+        connectionUrl: DB_PER_APP ? `mongodb://${process.env.MONGODB_HOST || "localhost"}:27017` : undefined
       }).then(function (apiInstance) {
         api = apiInstance;
         done();

@@ -15,7 +15,7 @@ var createRequestReplica = {"__dbperapp": "someRemoteApp", "__fhdb": "someReplic
   {"_id": 1, "ReplicaField1": "ReplicaField1Data"}
 ]};
 
-var LOCAL_URL = 'mongodb://localhost:27017/FH_LOCAL';
+var LOCAL_URL = `mongodb://${process.env.MONGODB_HOST || "localhost"}:27017/FH_LOCAL`;
 
 exports['test local mongo instance'] = function (cb) {
   assert.ok(!process.env['FH_MONGODB_CONN_URL']);
@@ -27,7 +27,7 @@ exports['test local mongo instance'] = function (cb) {
 
   console.log('test local database no mongo string');
 
-  MongoClient.connect("mongodb://admin:admin@localhost:27017/admin?fsync=true", {}, function(err, db){
+  MongoClient.connect(`mongodb://admin:admin@${process.env.MONGODB_HOST || "localhost"}:27017/admin?fsync=true`, {}, function(err, db){
     var targetDb = db.db("FH_LOCAL");
 
     targetDb.dropDatabase(function (err, result) {
@@ -71,7 +71,7 @@ exports['test single mongo instance'] = function (cb) {
 
 
   console.log('test local database single mongo instance');
-  process.env['FH_MONGODB_CONN_URL'] = "mongodb://user1:pass1@localhost:27017/someRemoteApp";
+  process.env['FH_MONGODB_CONN_URL'] = `mongodb://user1:pass1@${process.env.MONGODB_HOST || "localhost"}:27017/someRemoteApp`;
   var localdb = require("../lib/localdb.js");
   var local_db = localdb.local_db;
   var local_db_single_mongo_string = local_db;
@@ -79,7 +79,7 @@ exports['test single mongo instance'] = function (cb) {
 
   console.log('test local database no mongo string');
 
-  MongoClient.connect("mongodb://admin:admin@localhost:27017/admin?fsync=true", {}, function(err, db){
+  MongoClient.connect(`mongodb://admin:admin@${process.env.MONGODB_HOST || "localhost"}:27017/admin?fsync=true`, {}, function(err, db){
     var targetDb = db.db("someRemoteApp");
     targetDb.dropDatabase(function (err, result) {
       assert.ok(!err);
@@ -131,7 +131,7 @@ exports['test single mongo instance'] = function (cb) {
 exports['test replica instance usage'] = function (cb) {
 
   console.log('test local database replica mongo instance');
-  process.env['FH_MONGODB_CONN_URL'] = "mongodb://user2:pass2@localhost:27017,localhost:27017/someReplicaApp";
+  process.env['FH_MONGODB_CONN_URL'] = `mongodb://user2:pass2@${process.env.MONGODB_HOST || "localhost"}:27017,${process.env.MONGODB_HOST || "localhost"}:27017/someReplicaApp`;
   var localdb = require("../lib/localdb.js");
   var local_db = localdb.local_db;
   var local_db_replica_mongo_string = local_db;
@@ -139,7 +139,7 @@ exports['test replica instance usage'] = function (cb) {
 
   console.log('test local database no mongo string');
 
-  MongoClient.connect("mongodb://admin:admin@localhost:27017/admin?fsync=true", {}, function(err, db){
+  MongoClient.connect(`mongodb://admin:admin@${process.env.MONGODB_HOST || "localhost"}:27017/admin?fsync=true`, {}, function(err, db){
     var targetDb = db.db("someReplicaApp");
     targetDb.dropDatabase(function (err, result) {
       assert.ok(!err);
@@ -190,14 +190,14 @@ exports['test replica instance usage'] = function (cb) {
 exports['test replica with invalid auth string'] = function (cb) {
 
   console.log('test local database replica mongo instance');
-  process.env['FH_MONGODB_CONN_URL'] = "mongodb://:pass2@localhost:27017,localhost:27017/someReplicaApp";
+  process.env['FH_MONGODB_CONN_URL'] = `mongodb://:pass2@localhost:27017,localhost:27017,${process.env.MONGODB_HOST}:27017/someReplicaApp`;
   var localdb = require("../lib/localdb.js");
   var local_db = localdb.local_db;
   var local_db_replica_mongo_string = local_db;
   //Setting no environment variable, should default to localhost
 
   console.log('test local database no mongo string');
-  MongoClient.connect("mongodb://admin:admin@localhost:27017/admin?fsync=true", {}, function(err, db){
+  MongoClient.connect(`mongodb://admin:admin@${process.env.MONGODB_HOST || "localhost"}:27017/admin?fsync=true`, {}, function(err, db){
     var targetDb = db.db("someReplicaApp");
 
     targetDb.dropDatabase(function (err, result) {
@@ -229,24 +229,24 @@ exports['test connection string parsing'] = function (cb) {
   var localdb = require("../lib/localdb.js");
 
   function testGoodStrings(cb) {
-    var goodSingle = "mongodb://user2:pass2@localhost:27017/someReplicaApp";
-    var goodSingleRes = {"database": {"auth": {"user": "user2", "pass": "pass2"}, name: "someReplicaApp", port: 27017, host: "localhost", "driver_options": {}}};
+    var goodSingle = `mongodb://user2:pass2@${process.env.MONGODB_HOST || "localhost"}:27017/someReplicaApp`;
+    var goodSingleRes = {"database": {"auth": {"user": "user2", "pass": "pass2"}, name: "someReplicaApp", port: 27017, host: `${process.env.MONGODB_HOST || "localhost"}`, "driver_options": {}}};
 
-    var goodReplica = "mongodb://user2:pass2@localhost:27017,localhost:27018/someReplicaApp";
-    var goodReplicaRes = {"database": {"auth": {"user": "user2", "pass": "pass2"}, name: "someReplicaApp", port: [27017, 27018], host: ["localhost", "localhost"], "driver_options": {}}};
+    var goodReplica = `mongodb://user2:pass2@${process.env.MONGODB_HOST || "localhost"}:27017,localhost:27018/someReplicaApp`;
+    var goodReplicaRes = {"database": {"auth": {"user": "user2", "pass": "pass2"}, name: "someReplicaApp", port: [27017, 27018], host: ["localhost", `${process.env.MONGODB_HOST || "localhost"}`], "driver_options": {}}};
 
-    var goodReplica2 = "mongodb://user2:pass2@localhost,localhost:27018/someReplicaApp";
-    var goodReplica2Res = {"database": {"auth": {"user": "user2", "pass": "pass2"}, name: "someReplicaApp", port: [27017, 27018], host: ["localhost", "localhost"], "driver_options": {}}};
+    var goodReplica2 = `mongodb://user2:pass2@${process.env.MONGODB_HOST || "localhost"},localhost:27018/someReplicaApp`;
+    var goodReplica2Res = {"database": {"auth": {"user": "user2", "pass": "pass2"}, name: "someReplicaApp", port: [27017, 27018], host: [`${process.env.MONGODB_HOST || "localhost"}`, "localhost"], "driver_options": {}}};
 
-    var goodReplicaOption = "mongodb://user2:pass2@localhost,localhost:27018/someReplicaApp?someOption=someValue";
-    var goodReplicaOptionRes = {"database": {"auth": {"user": "user2", "pass": "pass2"}, name: "someReplicaApp", port: [27017, 27018], host: ["localhost", "localhost"], "driver_options": {"someOption": "someValue"}}};
+    var goodReplicaOption = `mongodb://user2:pass2@${process.env.MONGODB_HOST || "localhost"},localhost:27018/someReplicaApp?someOption=someValue`;
+    var goodReplicaOptionRes = {"database": {"auth": {"user": "user2", "pass": "pass2"}, name: "someReplicaApp", port: [27017, 27018], host: [`${process.env.MONGODB_HOST || "localhost"}`, "localhost"], "driver_options": {"someOption": "someValue"}}};
 
-    var goodReplicaOptions = "mongodb://user2:pass2@localhost,localhost:27018/someReplicaApp?someOption=someValue,someOption2=someValue2";
-    var goodReplicaOptionsRes = {"database": {"auth": {"user": "user2", "pass": "pass2"}, name: "someReplicaApp", port: [27017, 27018], host: ["localhost", "localhost"], "driver_options": {"someOption": "someValue", "someOption2": "someValue2"}}};
+    var goodReplicaOptions = `mongodb://user2:pass2@${process.env.MONGODB_HOST || "localhost"},localhost:27018/someReplicaApp?someOption=someValue,someOption2=someValue2`;
+    var goodReplicaOptionsRes = {"database": {"auth": {"user": "user2", "pass": "pass2"}, name: "someReplicaApp", port: [27017, 27018], host: [`${process.env.MONGODB_HOST || "localhost"}`, "localhost"], "driver_options": {"someOption": "someValue", "someOption2": "someValue2"}}};
 
 
-    var goodReplicaOptionsDifferentAddresses = "mongodb://user2:pass2@localhost,10.25.10.10:27018/someReplicaApp?someOption=someValue,someOption2=someValue2";
-    var goodReplicaOptionsDifferentAddressesRes = {"database": {"auth": {"user": "user2", "pass": "pass2"}, name: "someReplicaApp", port: [27017, 27018], host: ["localhost", "10.25.10.10"], "driver_options": {"someOption": "someValue", "someOption2": "someValue2"}}};
+    var goodReplicaOptionsDifferentAddresses = `mongodb://user2:pass2@${process.env.MONGODB_HOST || "localhost"},10.25.10.10:27018/someReplicaApp?someOption=someValue,someOption2=someValue2`;
+    var goodReplicaOptionsDifferentAddressesRes = {"database": {"auth": {"user": "user2", "pass": "pass2"}, name: "someReplicaApp", port: [27017, 27018], host: [`${process.env.MONGODB_HOST || "localhost"}`, "10.25.10.10"], "driver_options": {"someOption": "someValue", "someOption2": "someValue2"}}};
 
 
     var testGoodArray = [goodSingle, goodReplica, goodReplica2, goodReplicaOption, goodReplicaOptions, goodReplicaOptionsDifferentAddresses];
@@ -256,7 +256,7 @@ exports['test connection string parsing'] = function (cb) {
       var compareVal = undefined;
 
       assert.doesNotThrow(function () {
-        compareVal = localdb.parseMongoConnectionURL(testString)
+        compareVal = localdb.parseMongoConnectionURL(testString);
       }, `parsing string "${testString}" should be successful`);
 
       assert.ok(compareVal);
@@ -276,8 +276,8 @@ exports['test errors should be thrown for invalid connection strings'] = functio
   var localdb = require("../lib/localdb.js");
 
   var BAD_STRINGS = {
-    MISSING_AUTH_SECTION: 'mongodb://user2@localhost:27017,localhost:27017/someReplicaApp',
-    NO_DATABASE: 'mongodb://user2:pass2@localhost:27017,localhost:27017',
+    MISSING_AUTH_SECTION: `mongodb://user2@${process.env.MONGODB_HOST || "localhost"}:27017,${process.env.MONGODB_HOST || "localhost"}:27017/someReplicaApp`,
+    NO_DATABASE: `mongodb://user2:pass2@${process.env.MONGODB_HOST || "localhost"}:27017,${process.env.MONGODB_HOST || "localhost"}:27017`,
     NO_HOST: 'mongodb://user2:pass2@/someReplicaApp',
     GARBAGE: 'afgadf ga dfg adfg adfg asd ag:;;////',
     NOTHING: ''

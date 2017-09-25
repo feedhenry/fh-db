@@ -43,7 +43,7 @@ var config = require("./fixtures/base_config.json");
 
 var own_app_config = {
   "database" : {
-    "host" : "localhost",
+    "host" : `${process.env.MONGODB_HOST || "localhost"}`,
     "port" : 27017,
     "name" : "testing-own-app-database",
     "adminauth" : {
@@ -67,7 +67,7 @@ var own_app_config = {
 var test_fhdb_name = "testing-123456789123456789012345-dev";
 var ditcher_app_per_database = {
   "database" : {
-    "host" : "localhost",
+    "host" : `${process.env.MONGODB_HOST || "localhost"}`,
     "port" : 27017,
     "name" : test_fhdb_name,
     "adminauth" : {
@@ -1230,7 +1230,7 @@ var testImportMacOS = function(created, cb) {
 
 var testNonHexId = function(done) {
   logger.info("BEGIN testNonHexId...");
-  
+
   var collectionName = "fh_test_collection_non_hex_id";
   var createData = {
     "__fhdb" : test_fhdb_name,
