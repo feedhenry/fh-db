@@ -43,7 +43,7 @@ var config = require("./fixtures/base_config.json");
 
 var own_app_config = {
   "database": {
-    "host": "localhost",
+    "host": `${process.env.MONGODB_HOST || "localhost"}`,
     "port": 27017,
     "name": "testing-own-app-database",
     "adminauth": {
@@ -67,7 +67,7 @@ var own_app_config = {
 var test_fhdb_name = "testing-123456789123456789012345-dev";
 var ditcher_app_per_database = {
   "database": {
-    "host": "localhost",
+    "host": `${process.env.MONGODB_HOST || "localhost"}`,
     "port": 27017,
     "name": test_fhdb_name,
     "adminauth": {
@@ -816,10 +816,34 @@ var testList11 = function (cb) {
   }
 
   ditch.doList(doListRequest, function (err, listGtltRes) {
-    assert.equal(listGtltRes.length, 1);
+    assert.equal(listGtltRes.length, 2);
     assert.equal(listGtltRes[0].fields.idx, 2);
+    assert.equal(listGtltRes[1].fields.idx, 4);
     cb();
   });
+};
+
+var testList12 = function (cb) {
+  logger.info("test testList12()");
+
+
+  var doListRequest = {		
+    "__fhdb": test_fhdb_name,  
+    "type": 'fh_test_list',
+    "in" : {
+      "num1": [100, 110, 120],
+      "liker": ['123', 'abcdef']
+      }		
+    };
+
+  if (useOwnDatabase) {
+    doListRequest.__dbperapp = true;
+  }		
+
+  ditch.doList(doListRequest, function (err, listInRes) {
+    assert.equal(listInRes.length, 2);
+      cb();
+    });
 };
 
 var testListLimit = function (cb) {
@@ -1346,6 +1370,7 @@ exports.testDbActions = function (done) {
           testList9,
           testList10,
           testList11,
+          testList12,
           testBadCreate,
           testBadCreateNoFields,
           testBadCreate2,
