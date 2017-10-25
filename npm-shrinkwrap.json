@@ -13,7 +13,7 @@
       "resolved": "https://registry.npmjs.org/archiver/-/archiver-1.0.0.tgz",
       "dependencies": {
         "lodash": {
-          "version": "4.17.4",
+          "version": "4.17.2",
           "from": "lodash@>=4.8.0 <5.0.0",
           "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.4.tgz"
         }
