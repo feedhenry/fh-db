@@ -22,18 +22,18 @@ var useOwnDatabase = false;
 var loglevel = LOGLEVEL_INFO;
 
 var logger = {
-  info: (loglevel >= LOGLEVEL_INFO)?function (msg) {
+  info: (loglevel >= LOGLEVEL_INFO) ? function (msg) {
     console.log("INFO   ", msg);
-  }:function(){},
-  debug: (loglevel >= LOGLEVEL_DEBUG)?function (msg) {
+  } : function () { },
+  debug: (loglevel >= LOGLEVEL_DEBUG) ? function (msg) {
     console.log("DEBUG  ", msg);
-  }:function(){},
-  warning: (loglevel >= LOGLEVEL_WARNING)?function (msg) {
+  } : function () { },
+  warning: (loglevel >= LOGLEVEL_WARNING) ? function (msg) {
     console.log("WARNING", msg);
-  }:function(){},
-  error: (loglevel >= LOGLEVEL_ERROR)?function (msg) {
+  } : function () { },
+  error: (loglevel >= LOGLEVEL_ERROR) ? function (msg) {
     console.log("ERROR  ", msg);
-  }:function(){}
+  } : function () { }
 };
 var importExportHelpers = require('../lib/importexport/helpers.js')(logger);
 
@@ -42,131 +42,131 @@ var ditch;
 var config = require("./fixtures/base_config.json");
 
 var own_app_config = {
-  "database" : {
-    "host" : `${process.env.MONGODB_HOST || "localhost"}`,
-    "port" : 27017,
-    "name" : "testing-own-app-database",
-    "adminauth" : {
-          "user": "admin",
-          "pass": "admin"
-        },
-    "auth" : {
+  "database": {
+    "host": "localhost",
+    "port": 27017,
+    "name": "testing-own-app-database",
+    "adminauth": {
+      "user": "admin",
+      "pass": "admin"
+    },
+    "auth": {
       "user": "ditchuser",
       "pass": "ditchpassword",
       "source": "fh-ditch"
     },
-    "driver_options": {w:1, j:1}
+    "driver_options": { w: 1, j: 1 }
   },
 
-  "logger" : {
-    "loglevel" : 3
+  "logger": {
+    "loglevel": 3
   }
 };
 
 //Database name is the same as the appName sent to ditcher for app with own database
 var test_fhdb_name = "testing-123456789123456789012345-dev";
 var ditcher_app_per_database = {
-  "database" : {
-    "host" : `${process.env.MONGODB_HOST || "localhost"}`,
-    "port" : 27017,
-    "name" : test_fhdb_name,
-    "adminauth" : {
-          "user": "admin",
-          "pass": "admin"
-        },
-    "auth" : {
+  "database": {
+    "host": "localhost",
+    "port": 27017,
+    "name": test_fhdb_name,
+    "adminauth": {
+      "user": "admin",
+      "pass": "admin"
+    },
+    "auth": {
       "user": "ditchuser",
       "pass": "ditchpassword",
       "source": "fh-ditch"
     },
-    "driver_options": {w:1, j:1}
+    "driver_options": { w: 1, j: 1 }
   },
 
-  "logger" : {
-    "loglevel" : 3
+  "logger": {
+    "loglevel": 3
   }
 };
 
 var createData = {
-  "__fhdb" : test_fhdb_name,
-  "type" : "fh_test_collection",
-  "fields" : {
-    "firstName" : "Joe",
-    "lastName" : "Bloggs",
-    "address1" : "22 Bloggs Ville Road",
-    "address2" : "Blog Land",
-    "location" : {
-      "lat" : 50.1234,
-      "lon" : -7.987
+  "__fhdb": test_fhdb_name,
+  "type": "fh_test_collection",
+  "fields": {
+    "firstName": "Joe",
+    "lastName": "Bloggs",
+    "address1": "22 Bloggs Ville Road",
+    "address2": "Blog Land",
+    "location": {
+      "lat": 50.1234,
+      "lon": -7.987
     }
   }
 };
 
 var createDataOwnApp = {
-  "__fhdb" : "testing-own-app-database",
-  "__dbperapp" : true,
-  "type" : "fh_test_collection",
-  "fields" : {
-    "firstName" : "Joe",
-    "lastName" : "Bloggs",
-    "address1" : "22 Bloggs Ville Road",
-    "address2" : "Blog Land",
-    "location" : {
-      "lat" : 50.1234,
-      "lon" : -7.987
+  "__fhdb": "testing-own-app-database",
+  "__dbperapp": true,
+  "type": "fh_test_collection",
+  "fields": {
+    "firstName": "Joe",
+    "lastName": "Bloggs",
+    "address1": "22 Bloggs Ville Road",
+    "address2": "Blog Land",
+    "location": {
+      "lat": 50.1234,
+      "lon": -7.987
     }
   }
 };
 
 var createDataDitchApp = {
-  "__fhdb" : "testing-ditch-app-database",
-  "type" : "TestingCollectionWithFHPrefix",
-  "fields" : {
-    "firstName" : "Joe",
-    "lastName" : "Bloggs",
-    "address1" : "22 Bloggs Ville Road",
-    "address2" : "Blog Land",
-    "location" : {
-      "lat" : 50.1234,
-      "lon" : -7.987
+  "__fhdb": "testing-ditch-app-database",
+  "type": "TestingCollectionWithFHPrefix",
+  "fields": {
+    "firstName": "Joe",
+    "lastName": "Bloggs",
+    "address1": "22 Bloggs Ville Road",
+    "address2": "Blog Land",
+    "location": {
+      "lat": 50.1234,
+      "lon": -7.987
     }
   }
 };
 
 var createDataNoFields = {
-  "__fhdb" : test_fhdb_name,
-  "type" : "fh_test_collection"
+  "__fhdb": test_fhdb_name,
+  "type": "fh_test_collection"
 }
 
 var test_import_data = {
-    fruit : [
-      {"_id":"53724174c463b18116000004","name":"plums"}
-    ],
-    veg : [
-      {"_id":"53724174c463b18116000005","name":"carrots"}
-    ]
+  fruit: [
+    { "_id": "53724174c463b18116000004", "name": "plums" }
+  ],
+  veg: [
+    { "_id": "53724174c463b18116000005", "name": "carrots" }
+  ]
 };
 
 var testTopic = "test_topic";
 
-function createDatabasesAndUsers(cfg, callback){
-  var db = new mongodb.Db(cfg.database.name, new Server(cfg.database.host, cfg.database.port), {fsync:true});
+function createDatabasesAndUsers(cfg, callback) {
+  var db = new mongodb.Db(cfg.database.name, new Server(cfg.database.host, cfg.database.port), { fsync: true });
 
-  db.open(function(err, targetDb){
-    if(err)
+  db.open(function (err, targetDb) {
+    if (err)
       return callback(err);
 
-    targetDb.authenticate(cfg.database.adminauth.user, cfg.database.adminauth.pass, {authSource:"admin"}, function(err, result){
-      if(err)
+    targetDb.authenticate(cfg.database.adminauth.user, cfg.database.adminauth.pass, { authSource: "admin" }, function (err, result) {
+      if (err)
         return callback(err);
 
-      targetDb.dropDatabase(function(err, result) {
-        if(err)
+      targetDb.dropDatabase(function (err, result) {
+        if (err)
           return callback(err);
 
-        targetDb.removeUser(cfg.database.auth.user, function(){
-          targetDb.addUser(cfg.database.auth.user, cfg.database.auth.pass, function(err, result){
-            if(err)
+        targetDb.removeUser(cfg.database.auth.user, function () {
+          targetDb.addUser(cfg.database.auth.user, cfg.database.auth.pass, function (err, result) {
+            if (err)
               return callback(err);
 
             //Database created and user added. The rest of the tests will work as normal.
@@ -184,44 +184,44 @@ function createTestData(cfg, testTopic, callback) {
   db.name = cfg.database.name;
 
 
-  db.on("tearUp", function() {
-    db.createCollectionWithIndex(testTopic, 'idx', function(err) {
+  db.on("tearUp", function () {
+    db.createCollectionWithIndex(testTopic, 'idx', function (err) {
 
       if (err)
         return callback(err, null);
       db.create(testTopic, [
         {
-          idx : 1,
-          foo : 'foo',
-          num1 : 100,
-          num2 : 300,
-          liker : '123'
+          idx: 1,
+          foo: 'foo',
+          num1: 100,
+          num2: 300,
+          liker: '123'
         }, {
-          idx : 2,
-          foo : 'bar',
-          num1 : 110,
-          num2 : 600,
-          liker : 'abcdef'
+          idx: 2,
+          foo: 'bar',
+          num1: 110,
+          num2: 600,
+          liker: 'abcdef'
         }, {
-          idx : 3,
-          foo : 'foobar',
-          num1 : 120,
-          num2 : 200,
-          liker : 'abc123def'
+          idx: 3,
+          foo: 'foobar',
+          num1: 120,
+          num2: 200,
+          liker: 'abc123def'
         }, {
-          idx : 4,
-          foo : 'bar',
-          num1 : 130,
-          num2 : 500,
-          liker : 'abcdef123'
+          idx: 4,
+          foo: 'bar',
+          num1: 130,
+          num2: 500,
+          liker: 'abcdef123'
         }, {
-          idx : 5,
-          foo : 'foo',
-          num1 : 140,
-          num2 : 400,
-      liker : '123abcdef'
+          idx: 5,
+          foo: 'foo',
+          num1: 140,
+          num2: 400,
+          liker: '123abcdef'
         }
-      ], function(err, data) {
+      ], function (err, data) {
         assert.ok(!err, "Received error hen setting up test data: " + err);
         if (err)
           return callback(err);
@@ -231,7 +231,7 @@ function createTestData(cfg, testTopic, callback) {
     });
   });
 
-  db.addListener("error", function(err) {
+  db.addListener("error", function (err) {
     logger.error("createTestData database error: " + err);
   });
 
@@ -240,75 +240,74 @@ function createTestData(cfg, testTopic, callback) {
 
 function getDocs(collection, checkDocs) {
   var params = {
-    "__fhdb" : test_fhdb_name,
+    "__fhdb": test_fhdb_name,
     "__dbperapp": useOwnDatabase,
-    "type" : collection
+    "type": collection
   };
 
-  ditch.doGetCollectionInstance(params, function(err, collection) {
-    collection.find().toArray(function(err, docs) {
+  ditch.doGetCollectionInstance(params, function (err, collection) {
+    collection.find().toArray(function (err, docs) {
       assert.ok(!err);
-      checkDocs(err,docs);
+      checkDocs(err, docs);
     });
   });
 }
 
 
-var testCollectionOwnAppDatabase = function(cb){
+var testCollectionOwnAppDatabase = function (cb) {
 
   logger.info("test testCollectionOwnAppDatabase()");
   var databaseName = "testing-own-app-database";
   var collectionName = "testCollection";
 
-  var db = new mongodb.Db(databaseName, new Server(own_app_config.database.host, own_app_config.database.port), {fsync:true});
+  var db = new mongodb.Db(databaseName, new Server(own_app_config.database.host, own_app_config.database.port), { fsync: true });
 
 
-    db.open(function(err, targetDb){
+  db.open(function (err, targetDb) {
+    assert.ok(!err);
+
+
+    targetDb.authenticate(own_app_config.database.adminauth.user, own_app_config.database.adminauth.pass, { authSource: "admin" }, function (err, result) {
       assert.ok(!err);
 
-
-      targetDb.authenticate(own_app_config.database.adminauth.user, own_app_config.database.adminauth.pass,{authSource:"admin"}, function(err, result){
+      targetDb.dropDatabase(function (err, result) {
         assert.ok(!err);
 
-        targetDb.dropDatabase(function(err, result) {
-          assert.ok(!err);
+        targetDb.removeUser(own_app_config.database.auth.user, function () {
+          targetDb.addUser(own_app_config.database.auth.user, own_app_config.database.auth.pass, function (err, result) {
+            assert.ok(!err);
 
-          targetDb.removeUser(own_app_config.database.auth.user, function(){
-            targetDb.addUser(own_app_config.database.auth.user, own_app_config.database.auth.pass, function(err, result){
-              assert.ok(!err);
+            var ownAppDitch = new ditchhandler.Ditcher(own_app_config, logger, "9.8.7-Test Version", function () {
 
-              var ownAppDitch = new ditchhandler.Ditcher(own_app_config, logger, "9.8.7-Test Version", function() {
+              //Database created again, now I create a request to ditch
+              logger.info("test testCreate()");
+              var testData = JSON.parse(JSON.stringify(createDataOwnApp));
+              var expectedResult = JSON.parse(JSON.stringify(testData.fields));
+              ownAppDitch.doCreate(testData, function (err, res) {
+                logger.debug("Create = " + JSON.stringify(res));
+                logger.debug("Excpct = " + JSON.stringify(expectedResult));
+                logger.debug("data.guid = " + res.guid);
+                assert.equal(res.fields.firstName, "Joe");
+                assert.equal(JSON.stringify(res.fields), JSON.stringify(expectedResult));
 
-                //Database created again, now I create a request to ditch
-                logger.info("test testCreate()");
-                var testData = JSON.parse(JSON.stringify(createDataOwnApp));
-                var expectedResult = JSON.parse(JSON.stringify(testData.fields));
-                ownAppDitch.doCreate(testData, function(err, res) {
-                  logger.debug("Create = " + JSON.stringify(res));
-                  logger.debug("Excpct = " + JSON.stringify(expectedResult));
-                  logger.debug("data.guid = " + res.guid);
-                  assert.equal(res.fields.firstName, "Joe");
-                  assert.equal(JSON.stringify(res.fields), JSON.stringify(expectedResult));
-
-                  //Now that the creation has returned as expected, a query to the apps own database should show a collection without any of the feedhenry prefixes
-                  targetDb.listCollections().toArray(function(err, collections){
-                    logger.error(err);
-                    assert.ok(!err);
-                    logger.info(collections);
+                //Now that the creation has returned as expected, a query to the apps own database should show a collection without any of the feedhenry prefixes
+                targetDb.listCollections().toArray(function (err, collections) {
+                  logger.error(err);
+                  assert.ok(!err);
+                  logger.info(collections);
 
 
-                    var collNames = collections.filter(function(collection){
-                      return collection.name === createDataOwnApp.type;
-                    });
-                    assert.equal(collNames.length, 1);
-                    assert.equal(collNames[0].name, createDataOwnApp.type);
-
-                    targetDb.close();
-                    ownAppDitch.tearDown();
-
-                    cb();
-
+                  var collNames = collections.filter(function (collection) {
+                    return collection.name === createDataOwnApp.type;
                   });
+                  assert.equal(collNames.length, 1);
+                  assert.equal(collNames[0].name, createDataOwnApp.type);
+
+                  targetDb.close();
+                  ownAppDitch.tearDown();
+
+                  cb();
+
                 });
               });
             });
@@ -316,10 +315,11 @@ var testCollectionOwnAppDatabase = function(cb){
         });
       });
     });
+  });
 }
 
 
-var testCollectionDitchAppDatabase = function(cb){
+var testCollectionDitchAppDatabase = function (cb) {
 
   //Database created again, now I create a request to ditch
   logger.info("test testCollectionDitchAppDatabase");
@@ -327,7 +327,7 @@ var testCollectionDitchAppDatabase = function(cb){
 
   var testData = JSON.parse(JSON.stringify(createDataDitchApp));
   var expectedResult = JSON.parse(JSON.stringify(testData.fields));
-  ditch.doCreate(testData, function(err, res) {
+  ditch.doCreate(testData, function (err, res) {
     logger.debug("Create = " + JSON.stringify(res));
     logger.debug("Excpct = " + JSON.stringify(expectedResult));
     logger.debug("data.guid = " + res.guid);
@@ -335,25 +335,25 @@ var testCollectionDitchAppDatabase = function(cb){
     assert.equal(JSON.stringify(res.fields), JSON.stringify(expectedResult));
 
     //Now that the creation has returned as expected, a query to the apps own database should show a collection with the feedhenry prefixes
-    var db = new mongodb.Db(config.database.name, new Server(config.database.host, config.database.port), {fsync:true});
+    var db = new mongodb.Db(config.database.name, new Server(config.database.host, config.database.port), { fsync: true });
 
-    db.open(function(err, targetDb){
+    db.open(function (err, targetDb) {
       assert.ok(!err);
 
 
-      targetDb.authenticate(config.database.adminauth.user, config.database.adminauth.pass,{authSource:"admin"}, function(err, result){
+      targetDb.authenticate(config.database.adminauth.user, config.database.adminauth.pass, { authSource: "admin" }, function (err, result) {
         assert.ok(!err);
 
-        targetDb.listCollections().toArray(function(err, collections){
+        targetDb.listCollections().toArray(function (err, collections) {
           assert.ok(!err);
           logger.info(collections);
           var expectedCollectionName = "fh_" + createDataDitchApp.__fhdb + "_" + createDataDitchApp.type;
 
-          var collNames = collections.filter(function(collection){
+          var collNames = collections.filter(function (collection) {
             return collection.name === expectedCollectionName;
           });
           assert.equal(collNames.length, 1);
-          assert.equal(collNames[0].name,expectedCollectionName);
+          assert.equal(collNames[0].name, expectedCollectionName);
 
           targetDb.close();
 
@@ -364,32 +364,32 @@ var testCollectionDitchAppDatabase = function(cb){
   });
 }
 
-var testBasicOperationsOwnDatabase = function(cb){
+var testBasicOperationsOwnDatabase = function (cb) {
 
   logger.info("test testBasicOperationsOwnDatabase()");
   //tearing down ditch and setting up a new one to own database
   ditch.tearDown();
   useOwnDatabase = true;
   //Create new database for tests
-  var db = new mongodb.Db(ditcher_app_per_database.database.name, new Server(ditcher_app_per_database.database.host, ditcher_app_per_database.database.port), {fsync:true});
+  var db = new mongodb.Db(ditcher_app_per_database.database.name, new Server(ditcher_app_per_database.database.host, ditcher_app_per_database.database.port), { fsync: true });
 
-  db.open(function(err, targetDb){
+  db.open(function (err, targetDb) {
     assert.ok(!err);
 
 
-    targetDb.authenticate(ditcher_app_per_database.database.adminauth.user, ditcher_app_per_database.database.adminauth.pass, {authSource: "admin"}, function(err, result){
+    targetDb.authenticate(ditcher_app_per_database.database.adminauth.user, ditcher_app_per_database.database.adminauth.pass, { authSource: "admin" }, function (err, result) {
       assert.ok(!err);
 
-      targetDb.dropDatabase(function(err, result){
+      targetDb.dropDatabase(function (err, result) {
         assert.ok(!err);
 
-        targetDb.removeUser(ditcher_app_per_database.database.auth.user, function(){
-          targetDb.addUser(ditcher_app_per_database.database.auth.user, ditcher_app_per_database.database.auth.pass, function(err, result){
+        targetDb.removeUser(ditcher_app_per_database.database.auth.user, function () {
+          targetDb.addUser(ditcher_app_per_database.database.auth.user, ditcher_app_per_database.database.auth.pass, function (err, result) {
             assert.ok(!err);
             targetDb.close();
-            ditch = new ditchhandler.Ditcher(ditcher_app_per_database, logger, "9.8.7-Test Version", function() {
+            ditch = new ditchhandler.Ditcher(ditcher_app_per_database, logger, "9.8.7-Test Version", function () {
               //With the new database for this app, all of these tests should be correct also
-              createTestData(ditcher_app_per_database, "fh_test_list", function() {
+              createTestData(ditcher_app_per_database, "fh_test_list", function () {
                 async.waterfall([
                   testCreate,
                   testRead,
@@ -440,14 +440,14 @@ var testBasicOperationsOwnDatabase = function(cb){
   });
 }
 
-var testCreate = function(cb) {
+var testCreate = function (cb) {
   logger.info("test testCreate()");
   var testData = useOwnDatabase ? JSON.parse(JSON.stringify(createDataOwnApp)) : JSON.parse(JSON.stringify(createData));
 
 
 
   var expectedResult = JSON.parse(JSON.stringify(testData.fields));
-  ditch.doCreate(testData, function(err, res) {
+  ditch.doCreate(testData, function (err, res) {
     logger.debug("Create = " + JSON.stringify(res));
     logger.debug("Excpct = " + JSON.stringify(expectedResult));
     logger.debug("data.guid = " + res.guid);
@@ -457,21 +457,21 @@ var testCreate = function(cb) {
   });
 };
 
-var testRead = function(created, cb) {
+var testRead = function (created, cb) {
   logger.info("test testRead()");
   var readReq = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_collection",
-    "guid" : created.guid
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_collection",
+    "guid": created.guid
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     readReq.__dbperapp = true;
   }
 
   logger.debug("readReq", readReq);
-  ditch.doRead(readReq, function(err, res) {
-    logger.debug("Read = ",res);
+  ditch.doRead(readReq, function (err, res) {
+    logger.debug("Read = ", res);
     assert.equal(res.fields.firstName, "Joe");
     assert.equal(res.fields.address1, "22 Bloggs Ville Road");
     assert.equal(JSON.stringify(res.fields), JSON.stringify(created.fields));
@@ -480,17 +480,17 @@ var testRead = function(created, cb) {
 };
 
 
-var testUpdate = function(created, cb) {
+var testUpdate = function (created, cb) {
   logger.info("test testUpdate()");
   var updateReq = JSON.parse(JSON.stringify(created));
   updateReq.fields.firstName = 'Jane';
   updateReq["__fhdb"] = test_fhdb_name;
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     updateReq.__dbperapp = true;
   }
 
-  ditch.doUpdate(updateReq, function(err, res) {
+  ditch.doUpdate(updateReq, function (err, res) {
     logger.debug("updateRes = " + JSON.stringify(res));
 
     // firstName should have changed - other fields still the
@@ -501,13 +501,13 @@ var testUpdate = function(created, cb) {
   });
 };
 
-var testListCollections = function(created, cb) {
+var testListCollections = function (created, cb) {
   logger.info("test testListCollections()");
   // We're just passing created thru to the delete test...
   ditch.doList({
-    "__fhdb" : test_fhdb_name,
-    "__dbperapp" : useOwnDatabase
-  }, function(err, res) {
+    "__fhdb": test_fhdb_name,
+    "__dbperapp": useOwnDatabase
+  }, function (err, res) {
     assert.ok(!err);
     assert.ok(res);
     assert.ok(res.length > 0);
@@ -519,19 +519,19 @@ var testListCollections = function(created, cb) {
   });
 };
 
-var testDelete = function(created, cb) {
+var testDelete = function (created, cb) {
   logger.info("test testDelete()");
   var deleteReq = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_collection",
-    "guid" : created.guid
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_collection",
+    "guid": created.guid
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     deleteReq.__dbperapp = true;
   }
 
-  ditch.doDelete(deleteReq, function(err, deleteRes) {
+  ditch.doDelete(deleteReq, function (err, deleteRes) {
     assert.equal(deleteRes.fields.firstName, "Jane");
     assert.equal(deleteRes.fields.address1, "22 Bloggs Ville Road");
     cb(undefined, created);
@@ -544,57 +544,57 @@ var testDeleteAgain = function (created, cb) {
   // Try deleting again - should just get an empty
   // response.
   var deleteReq = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_collection",
-    "guid" : created.guid
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_collection",
+    "guid": created.guid
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     deleteReq.__dbperapp = true;
   }
 
-  ditch.doDelete(deleteReq, function(err, res) {
+  ditch.doDelete(deleteReq, function (err, res) {
     assert.ok(!err);
     assert.equal(JSON.stringify(res), "{}");
     cb(undefined, created);
   });
 };
 
-var testDeleteNonHexGuid = function(created, cb) {
+var testDeleteNonHexGuid = function (created, cb) {
   logger.info("test testDeleteNonHexGuid()");
   var deleteReq = {
-    "__fhdb" : "123456789",
-    "type" : "fh_test_collection",
-    "guid" : created.guid + "3333"
+    "__fhdb": "123456789",
+    "type": "fh_test_collection",
+    "guid": created.guid + "3333"
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     deleteReq.__dbperapp = true;
   }
 
-  ditch.doDelete(deleteReq, function(err, deleteRes) {
+  ditch.doDelete(deleteReq, function (err, deleteRes) {
     assert.ok(!err);
     assert.equal(JSON.stringify(deleteRes), "{}");
     cb();
   });
 };
 
-var testList1 = function(cb) {
+var testList1 = function (cb) {
   logger.info("test testList1()");
 
   var doListRequest = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_list",
-    "eq" : {
-      "foo" : "foo"
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "eq": {
+      "foo": { value: "foo", type: "String" }
     }
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     doListRequest.__dbperapp = true;
   }
 
-  ditch.doList(doListRequest, function(err, listEqRes) {
+  ditch.doList(doListRequest, function (err, listEqRes) {
     assert.ok(!err);
     logger.debug("listEqRes", listEqRes);
     assert.equal(listEqRes.length, 2);
@@ -606,18 +606,18 @@ var testList2 = function (cb) {
   logger.info("test testList2()");
 
   var doListRequest = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_list",
-    "ne" : {
-      "foo" : "foo"
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "ne": {
+      "foo": { value: "foo", type: "String" }
     }
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     doListRequest.__dbperapp = true;
   }
 
-  ditch.doList(doListRequest, function(err, listNeqRes) {
+  ditch.doList(doListRequest, function (err, listNeqRes) {
     assert.equal(listNeqRes.length, 3);
     cb();
   });
@@ -627,18 +627,18 @@ var testList3 = function (cb) {
   logger.info("test testList3()");
 
   var doListRequest = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_list",
-    "gt" : {
-      "num2" : 400
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "gt": {
+      "num2": { value: 400, type: "Number" }
     }
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     doListRequest.__dbperapp = true;
   }
 
-  ditch.doList(doListRequest, function(err, listNeqRes) {
+  ditch.doList(doListRequest, function (err, listNeqRes) {
     assert.equal(listNeqRes.length, 2);
     cb();
   });
@@ -648,152 +648,152 @@ var testList4 = function (cb) {
   logger.info("test testList4()");
 
   var doListRequest = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_list",
-    "ge" : {
-      "num2" : 400
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "ge": {
+      "num2": { value: 400, type: "Number" }
     }
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     doListRequest.__dbperapp = true;
   }
 
-  ditch.doList(doListRequest, function(err, listNeqRes) {
+  ditch.doList(doListRequest, function (err, listNeqRes) {
     assert.equal(listNeqRes.length, 3);
     cb();
   });
 };
 
-var testList5 = function(cb) {
+var testList5 = function (cb) {
   logger.info("test testList5()");
 
   var doListRequest = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_list",
-    "lt" : {
-      "num2" : 400
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "lt": {
+      "num2": { value: 400, type: "Number" }
     }
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     doListRequest.__dbperapp = true;
   }
 
-  ditch.doList(doListRequest, function(err, listNeqRes) {
+  ditch.doList(doListRequest, function (err, listNeqRes) {
     assert.equal(listNeqRes.length, 2);
     cb();
   });
 };
 
-var testList6 = function(cb) {
+var testList6 = function (cb) {
   logger.info("test testList6()");
 
   var doListRequest = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_list",
-    "le" : {
-      "num2" : 400
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "le": {
+      "num2": { value: 400, type: "Number" }
     }
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     doListRequest.__dbperapp = true;
   }
 
 
-  ditch.doList(doListRequest, function(err, listNeqRes) {
-      assert.equal(listNeqRes.length, 3);
-      cb();
+  ditch.doList(doListRequest, function (err, listNeqRes) {
+    assert.equal(listNeqRes.length, 3);
+    cb();
   });
 };
 
-var testList7 = function(cb) {
+var testList7 = function (cb) {
   logger.info("test testList7()");
 
   var doListRequest = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_list",
-    "like" : {
-      "liker" : "^123$"
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "like": {
+      "liker": { value: "^123$", type: "String" }
     }
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     doListRequest.__dbperapp = true;
   }
 
 
-  ditch.doList(doListRequest, function(err, listNeqRes) {
-      assert.equal(listNeqRes.length, 1);
-      listNeqRes[0].idx = 1;
-      cb();
+  ditch.doList(doListRequest, function (err, listNeqRes) {
+    assert.equal(listNeqRes.length, 1);
+    listNeqRes[0].idx = 1;
+    cb();
   });
 };
 
-var testList8 = function(cb) {
+var testList8 = function (cb) {
   logger.info("test testList8()");
 
   var doListRequest = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_list",
-    "like" : {
-      "liker" : "123"
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "like": {
+      "liker": { value: "123", type: "String" }
     }
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     doListRequest.__dbperapp = true;
   }
 
-  ditch.doList(doListRequest, function(err, listNeqRes) {
-      assert.equal(listNeqRes.length, 4);
-      listNeqRes[0].idx = 1;
-      cb();
+  ditch.doList(doListRequest, function (err, listNeqRes) {
+    assert.equal(listNeqRes.length, 4);
+    listNeqRes[0].idx = 1;
+    cb();
   });
 };
 
-var testList9 = function(cb) {
+var testList9 = function (cb) {
   logger.info("test testList9()");
 
   var doListRequest = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_list",
-    "like" : {
-      "liker" : "def"
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "like": {
+      "liker": { value: "def", type: "String" }
     }
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     doListRequest.__dbperapp = true;
   }
 
-  ditch.doList(doListRequest, function(err, listNeqRes) {
-      assert.equal(listNeqRes.length, 4);
-      listNeqRes[0].idx = 1;
-      cb();
+  ditch.doList(doListRequest, function (err, listNeqRes) {
+    assert.equal(listNeqRes.length, 4);
+    listNeqRes[0].idx = 1;
+    cb();
   });
 };
 
-var testList10 = function(cb) {
+var testList10 = function (cb) {
   logger.info("test testList10()");
 
   var doListRequest = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_list",
-    "like" : {
-      "liker" : "def$"
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "like": {
+      "liker": { value: "def$", type: "String" }
     }
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     doListRequest.__dbperapp = true;
   }
 
-  ditch.doList(doListRequest, function(err, listNeqRes) {
-      assert.equal(listNeqRes.length, 3);
-      listNeqRes[0].idx = 1;
-      cb();
+  ditch.doList(doListRequest, function (err, listNeqRes) {
+    assert.equal(listNeqRes.length, 3);
+    listNeqRes[0].idx = 1;
+    cb();
   });
 };
 
@@ -803,18 +803,15 @@ var testList11 = function (cb) {
 
 
   var doListRequest = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_list",
-    "gt" : {
-      "num1" : 100,
-      "num2" : 400
-    },
-    "lt" : {
-      "num1" : 130
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "gt": {
+      "num1": { value: 100, type: "Number" },
+      "num2": { value: 400, type: "Number" }
     }
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     doListRequest.__dbperapp = true;
   }
 
@@ -825,39 +822,16 @@ var testList11 = function (cb) {
   });
 };
 
-var testList12 = function (cb){
-  logger.info("test testList12()");
-
-
-  var doListRequest = {
-    "__fhdb": test_fhdb_name,
-    "type": 'fh_test_list',
-    "in" : {
-      "num1": [100, 110, 120],
-      "liker": ['123', 'abcdef']
-    }
-  };
-
-  if(useOwnDatabase){
-    doListRequest.__dbperapp = true;
-  }
-
-  ditch.doList(doListRequest, function (err, listInRes) {
-      assert.equal(listInRes.length, 2);
-      cb();
-  });
-}
-
-var testListLimit = function (cb){
+var testListLimit = function (cb) {
   logger.info("test testListLimit()");
 
   var testLimitRequest = {
     "__fhdb": test_fhdb_name,
     "type": 'fh_test_list',
-    "limit" : 1
+    "limit": 1
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     testLimitRequest.__dbperapp = true;
   }
 
@@ -868,7 +842,7 @@ var testListLimit = function (cb){
   });
 }
 
-var testListSkip = function (cb){
+var testListSkip = function (cb) {
   logger.info("test testListSkip()");
 
   var testListSkipRequest = {
@@ -876,7 +850,7 @@ var testListSkip = function (cb){
     "type": 'fh_test_list'
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     testListSkipRequest.__dbperapp = true;
   }
 
@@ -886,149 +860,149 @@ var testListSkip = function (cb){
     var doListSkipRequest2 = {
       "__fhdb": test_fhdb_name,
       "type": 'fh_test_list',
-      "skip" : 1
+      "skip": 1
     };
 
-    if(useOwnDatabase){
+    if (useOwnDatabase) {
       doListSkipRequest2.__dbperapp = true;
     }
 
     ditch.doList(doListSkipRequest2, function (err, skipRes) {
       assert.ok(!err);
-      assert.equal(skipRes.length, fullLength-1);
+      assert.equal(skipRes.length, fullLength - 1);
       cb();
     });
   });
 };
 
-var testListSort = function(cb){
+var testListSort = function (cb) {
   logger.info("test testListSort()");
 
 
   var testListSortRequest = {
     "__fhdb": test_fhdb_name,
     "type": 'fh_test_list',
-    "sort" : {
-      'idx' : -1
+    "sort": {
+      'idx': -1
     }
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     testListSortRequest.__dbperapp = true;
   }
 
   ditch.doList(testListSortRequest, function (err, descSortedRes) {
     assert.ok(descSortedRes.length);
     // Verify the list is sorted by IDX field desc
-    for (var i=0; i<descSortedRes.length-1; i++){
-      assert.ok(descSortedRes[i].fields.idx > descSortedRes[i+1].fields.idx);
+    for (var i = 0; i < descSortedRes.length - 1; i++) {
+      assert.ok(descSortedRes[i].fields.idx > descSortedRes[i + 1].fields.idx);
     }
 
     var doListRequest = {
       "__fhdb": test_fhdb_name,
       "type": 'fh_test_list',
-      "sort" : [[ 'idx' , 'asc' ]] // specify sort in the other horrible awful 2D array MongoDB Format what were they thinking
+      "sort": [['idx', 'asc']] // specify sort in the other horrible awful 2D array MongoDB Format what were they thinking
     };
 
-    if(useOwnDatabase){
+    if (useOwnDatabase) {
       doListRequest.__dbperapp = true;
     }
 
     ditch.doList(doListRequest, function (err, ascSortedRes) {
       assert.ok(ascSortedRes.length);
-      for (var i=0; i<ascSortedRes.length-1; i++){
-        assert.ok(ascSortedRes[i].fields.idx < ascSortedRes[i+1].fields.idx);
+      for (var i = 0; i < ascSortedRes.length - 1; i++) {
+        assert.ok(ascSortedRes[i].fields.idx < ascSortedRes[i + 1].fields.idx);
       }
       cb();
     });
   });
 };
 
-var testBadCreateGeneric = function(name, data, cb) {
+var testBadCreateGeneric = function (name, data, cb) {
   logger.info("testing " + name);
-  ditch.doCreate(data, function(err, res) {
+  ditch.doCreate(data, function (err, res) {
     assert.ok(err, "Should return error for invalid params");
     cb();
   });
 };
 
-var testBadCreate = function(cb) {
+var testBadCreate = function (cb) {
   testBadCreateGeneric("testBadCreate", JSON.stringify({}), cb)
 };
 
-var testBadCreateNoFields = function(cb) {
+var testBadCreateNoFields = function (cb) {
   testBadCreateGeneric("testBadCreateNoFields", JSON.stringify(createDataNoFields), cb);
 };
 
-var testBadCreate2 = function(cb) {
+var testBadCreate2 = function (cb) {
   testBadCreateGeneric("testBadCreate2", JSON.stringify({
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_collection"
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_collection"
   }), cb);
 };
 
-var testBadCreate3 = function(cb) {
+var testBadCreate3 = function (cb) {
 
   var badCreate3Request = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_collection",
-    "fields" : "hello world"
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_collection",
+    "fields": "hello world"
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     badCreate3Request.__dbperapp = true;
   }
   testBadCreateGeneric("testBadCreate3", JSON.stringify(badCreate3Request), cb);
 };
 
-var testBadCreate4 = function(cb) {
+var testBadCreate4 = function (cb) {
 
   var badCreate4Request = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_collection",
-    "fields" : "{\"field1\":\"create1\", \"field2\": \"create2\",\"field3\":\"create3\"}"
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_collection",
+    "fields": "{\"field1\":\"create1\", \"field2\": \"create2\",\"field3\":\"create3\"}"
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     badCreate4Request.__dbperapp = true;
   }
   testBadCreateGeneric("testBadCreate4", JSON.stringify(badCreate4Request), cb);
 };
 
-var testBadCreate5 = function(cb) {
+var testBadCreate5 = function (cb) {
   var testBadCreate5Request = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_collection",
-    "fields" : 451
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_collection",
+    "fields": 451
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     testBadCreate5Request.__dbperapp = true;
   }
   testBadCreateGeneric("testBadCreate5", JSON.stringify(testBadCreate5Request), cb);
 };
 
-var testBadCreate6 = function(cb) {
+var testBadCreate6 = function (cb) {
 
   var testBadCreate6Request = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_collection",
-    "fields" : []
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_collection",
+    "fields": []
   };
 
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     testBadCreate6Request.__dbperapp = true;
   }
   testBadCreateGeneric("testBadCreate6", JSON.stringify(testBadCreate6Request), cb);
 };
 
-var testBadCreate7 = function(cb) {
+var testBadCreate7 = function (cb) {
   var data = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_fhdb_name_too_long_11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
-    "fields" : {
-      "firstName" : "Joe"
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_fhdb_name_too_long_11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+    "fields": {
+      "firstName": "Joe"
     }
   };
 
@@ -1036,25 +1010,25 @@ var testBadCreate7 = function(cb) {
 };
 
 
-var testBadUpdate = function(cb) {
+var testBadUpdate = function (cb) {
   var badUpdateReq = {
-    "__fhdb" : "NOT_EXISTS",
-    "type" : "fh_test_collection",
-    "guid" : "bad-guid--not-here"
+    "__fhdb": "NOT_EXISTS",
+    "type": "fh_test_collection",
+    "guid": "bad-guid--not-here"
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     badUpdateReq.__dbperapp = true;
   }
 
   logger.info("test testBadUpdate()");
-  ditch.doUpdate(badUpdateReq, function(err, res) {
+  ditch.doUpdate(badUpdateReq, function (err, res) {
     assert.ok(err, "Should return error on bad Update params");
     cb();
   });
 };
 
-var testParallelCreate = function(cb) {
+var testParallelCreate = function (cb) {
   logger.info("test testParallelCreate()");
   var testData1 = useOwnDatabase ? JSON.parse(JSON.stringify(createDataOwnApp)) : JSON.parse(JSON.stringify(createData));
   var testData2 = useOwnDatabase ? JSON.parse(JSON.stringify(createDataOwnApp)) : JSON.parse(JSON.stringify(createData));
@@ -1069,22 +1043,22 @@ var testParallelCreate = function(cb) {
 
   async.parallel([
     function (testCallback) {
-      ditch.doCreate(testData1, function(err, res) {
+      ditch.doCreate(testData1, function (err, res) {
         testCallback(err, res);
       });
     },
     function (testCallback) {
-      ditch.doCreate(testData2, function(err, res) {
+      ditch.doCreate(testData2, function (err, res) {
         testCallback(err, res);
       });
     },
     function (testCallback) {
-      ditch.doCreate(testData3, function(err, res) {
+      ditch.doCreate(testData3, function (err, res) {
         testCallback(err, res);
       });
     },
     function (testCallback) {
-      ditch.doCreate(testData4, function(err, res) {
+      ditch.doCreate(testData4, function (err, res) {
         testCallback(err, res);
       });
     }
@@ -1096,69 +1070,69 @@ var testParallelCreate = function(cb) {
 
 };
 
-var testDeleteAll = function(expectedDeleteCount, cb) {
+var testDeleteAll = function (expectedDeleteCount, cb) {
   logger.info("test testDeleteAll(" + expectedDeleteCount + ")");
 
 
   var testDeleteAllRequest = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_list"
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list"
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     testDeleteAllRequest.__dbperapp = true;
   }
 
-  ditch.doDeleteAll(testDeleteAllRequest, function(err, deleteAllRes) {
-      assert.equal(deleteAllRes.status, "ok");
-      assert.equal(deleteAllRes.count, expectedDeleteCount);
-      return cb();
+  ditch.doDeleteAll(testDeleteAllRequest, function (err, deleteAllRes) {
+    assert.equal(deleteAllRes.status, "ok");
+    assert.equal(deleteAllRes.count, expectedDeleteCount);
+    return cb();
   });
 };
 
-var testListAfterDelete = function(cb) {
+var testListAfterDelete = function (cb) {
   logger.info("test testListAfterDelete()");
 
   var testListAfterDeleteRequest = {
-    "__fhdb" : test_fhdb_name,
-    "type" : "fh_test_list"
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list"
   };
 
-  if(useOwnDatabase){
+  if (useOwnDatabase) {
     testListAfterDeleteRequest.__dbperapp = true;
   }
 
-  ditch.doList(testListAfterDeleteRequest, function(err, listEqRes) {
-      assert.equal(listEqRes.length, 0);
-      return cb();
+  ditch.doList(testListAfterDeleteRequest, function (err, listEqRes) {
+    assert.equal(listEqRes.length, 0);
+    return cb();
   });
 };
 
-var testExport = function(created, cb) {
+var testExport = function (created, cb) {
   logger.info("test testExport()");
   ditch.doExport({
-    "__fhdb" : test_fhdb_name,
-    "__dbperapp" : useOwnDatabase
-  }, function(err, res) {
+    "__fhdb": test_fhdb_name,
+    "__dbperapp": useOwnDatabase
+  }, function (err, res) {
     assert.ok(!err);
     assert.ok(res);
     assert.ok(res instanceof Buffer);
 
     var filePath = '/tmp/testZip.zip',
-    mockParams = {
-      filename : 'testZip.zip',
-      files : {
-        toimport : {
-          path : filePath,
-          name : 'testZip.zip'
+      mockParams = {
+        filename: 'testZip.zip',
+        files: {
+          toimport: {
+            path: filePath,
+            name: 'testZip.zip'
+          }
         }
-      }
-    };
+      };
     // let's write the exported file to disk to immitate an incoming import request
     // then crack open the zip to verify all OK
-    fs.writeFile(filePath, res, 'binary', function(err, succ){
+    fs.writeFile(filePath, res, 'binary', function (err, succ) {
       assert.ok(!err);
-      importExportHelpers.importFile(mockParams, function(err, res){
+      importExportHelpers.importFile(mockParams, function (err, res) {
         assert.ok(!err);
         assert.ok(res);
         assert.ok(typeof res === 'object');
@@ -1170,43 +1144,43 @@ var testExport = function(created, cb) {
   });
 };
 
-var testImport = function(created, cb) {
+var testImport = function (created, cb) {
   logger.info("test testImport()");
 
   ditch.doImport({
-    "__fhdb" : test_fhdb_name,
-    collections : test_import_data,
-    filename : 'import.zip',
-    files : {
-      toimport : {
-        path : __dirname + '/fixtures/import.zip',
-        name : 'import.zip'
+    "__fhdb": test_fhdb_name,
+    collections: test_import_data,
+    filename: 'import.zip',
+    files: {
+      toimport: {
+        path: __dirname + '/fixtures/import.zip',
+        name: 'import.zip'
       }
     },
-    "__dbperapp" : useOwnDatabase
-  }, function(err, res) {
+    "__dbperapp": useOwnDatabase
+  }, function (err, res) {
     assert.ok(!err);
     assert.ok(res);
     assert.ok(res.ok);
     assert.ok(res.imported);
     assert.ok(res.imported.length === 2);
-    assert.ok(res.imported.indexOf('fruit')>-1);
-    assert.ok(res.imported.indexOf('veg')>-1);
+    assert.ok(res.imported.indexOf('fruit') > -1);
+    assert.ok(res.imported.indexOf('veg') > -1);
 
     async.series([
-      function(callback) {
-        getDocs('fruit', function(err, docs) {
-          assert.equal(docs.length,1);
-          assert.equal(docs[0].name,'plums');
+      function (callback) {
+        getDocs('fruit', function (err, docs) {
+          assert.equal(docs.length, 1);
+          assert.equal(docs[0].name, 'plums');
 
           callback(err);
         });
       },
-      function(callback) {
-        getDocs('veg', function(err, docs) {
-          assert.equal(docs.length,2);
-          assert.equal(docs[0].field,'onions');
-          assert.equal(docs[1].field,'carrots');
+      function (callback) {
+        getDocs('veg', function (err, docs) {
+          assert.equal(docs.length, 2);
+          assert.equal(docs[0].field, 'onions');
+          assert.equal(docs[1].field, 'carrots');
 
           callback(err);
         });
@@ -1218,93 +1192,93 @@ var testImport = function(created, cb) {
   });
 };
 
-var testImportMacOS = function(created, cb) {
+var testImportMacOS = function (created, cb) {
   logger.info("test testImport()");
 
   ditch.doImport({
-    "__fhdb" : test_fhdb_name,
-    collections : test_import_data,
-    filename : 'import-MacOS.zip',
-    files : {
-      toimport : {
-        path : __dirname + '/fixtures/import-MacOS.zip',
-        name : 'import-MacOS.zip'
+    "__fhdb": test_fhdb_name,
+    collections: test_import_data,
+    filename: 'import-MacOS.zip',
+    files: {
+      toimport: {
+        path: __dirname + '/fixtures/import-MacOS.zip',
+        name: 'import-MacOS.zip'
       }
     },
-    "__dbperapp" : useOwnDatabase
-  }, function(err, res) {
+    "__dbperapp": useOwnDatabase
+  }, function (err, res) {
     assert.ok(!err);
     assert.ok(res);
     assert.ok(res.ok);
     assert.ok(res.imported);
     assert.ok(res.imported.length === 3);
-    assert.ok(res.imported.indexOf('collection01')>-1);
-    assert.ok(res.imported.indexOf('collection02')>-1);
-    assert.ok(res.imported.indexOf('collection03')>-1);
+    assert.ok(res.imported.indexOf('collection01') > -1);
+    assert.ok(res.imported.indexOf('collection02') > -1);
+    assert.ok(res.imported.indexOf('collection03') > -1);
 
-    getDocs('collection01', function(err, docs) {
+    getDocs('collection01', function (err, docs) {
       assert.ok(!err);
-      assert.equal(docs.length,3);
-      assert.equal(docs[0].field,'value01');
-      assert.equal(docs[1].field,'value02');
-      assert.equal(docs[2].field,'value03');
+      assert.equal(docs.length, 3);
+      assert.equal(docs[0].field, 'value01');
+      assert.equal(docs[1].field, 'value02');
+      assert.equal(docs[2].field, 'value03');
 
       return cb(undefined, created);
     });
   });
 };
 
-var testNonHexId = function(done) {
+var testNonHexId = function (done) {
   logger.info("BEGIN testNonHexId...");
 
   var collectionName = "fh_test_collection_non_hex_id";
   var createData = {
-    "__fhdb" : test_fhdb_name,
-    "type" : collectionName,
-    "fields" : {
+    "__fhdb": test_fhdb_name,
+    "type": collectionName,
+    "fields": {
       "_id": "foobar",
-      "firstName" : "Foo",
-      "lastName" : "Bar"
+      "firstName": "Foo",
+      "lastName": "Bar"
     }
   };
 
   async.waterfall([
-    function(cb) {
+    function (cb) {
       logger.info("test testCreate()");
 
       var testData = JSON.parse(JSON.stringify(createData));
       var expectedResult = JSON.parse(JSON.stringify(testData.fields));
 
-      ditch.doCreate(testData, function(err, res) {
+      ditch.doCreate(testData, function (err, res) {
         assert.equal(res.guid, createData.fields._id);
         assert.equal(res.fields.firstName, createData.fields.firstName);
         assert.equal(res.fields.lastName, createData.fields.lastName);
         cb(undefined, res);
       });
     },
-    function(created, cb) {
+    function (created, cb) {
       logger.info("test testRead()");
       var readReq = {
-        "__fhdb" : test_fhdb_name,
-        "type" : collectionName,
-        "guid" : created.guid
+        "__fhdb": test_fhdb_name,
+        "type": collectionName,
+        "guid": created.guid
       };
 
       logger.debug("readReq", readReq);
-      ditch.doRead(readReq, function(err, res) {
+      ditch.doRead(readReq, function (err, res) {
         assert.equal(res.guid, createData.fields._id);
         assert.equal(res.fields.firstName, createData.fields.firstName);
         assert.equal(res.fields.lastName, createData.fields.lastName);
         cb(undefined, created);
       });
     },
-    function(created, cb) {
+    function (created, cb) {
       logger.info("test testUpdate()");
       var updateReq = JSON.parse(JSON.stringify(created));
       updateReq.fields.firstName = 'Fizz';
       updateReq["__fhdb"] = test_fhdb_name;
 
-      ditch.doUpdate(updateReq, function(err, res) {
+      ditch.doUpdate(updateReq, function (err, res) {
         logger.debug("updateRes = " + JSON.stringify(res));
 
         // firstName should have changed - other fields still the
@@ -1315,15 +1289,15 @@ var testNonHexId = function(done) {
         cb(undefined, created);
       });
     },
-    function(created, cb) {
+    function (created, cb) {
       logger.info("test testDelete()");
       var deleteReq = {
-        "__fhdb" : test_fhdb_name,
-        "type" : collectionName,
-        "guid" : created.guid
+        "__fhdb": test_fhdb_name,
+        "type": collectionName,
+        "guid": created.guid
       };
 
-      ditch.doDelete(deleteReq, function(err, deleteRes) {
+      ditch.doDelete(deleteReq, function (err, deleteRes) {
         assert.equal(deleteRes.guid, createData.fields._id);
         assert.equal(deleteRes.fields.firstName, "Fizz");
         assert.equal(deleteRes.fields.lastName, createData.fields.lastName);
@@ -1339,56 +1313,55 @@ var testNonHexId = function(done) {
 };
 
 
-exports.testDbActions = function(done) {
+exports.testDbActions = function (done) {
   logger.info("BEGIN testDbActions...");
 
   //As databases are now password secured, all tests should reflect this.
   //Admin user will set up a username and password for the test database
-  createDatabasesAndUsers(config, function(err){
-    if(err)
+  createDatabasesAndUsers(config, function (err) {
+    if (err)
       logger.error(err);
-    ditch = new ditchhandler.Ditcher(config, logger, "9.8.7-Test Version", function() {
+    ditch = new ditchhandler.Ditcher(config, logger, "9.8.7-Test Version", function () {
 
-    createTestData(config, "fh_" + test_fhdb_name + "_fh_test_list", function() {
-      async.waterfall([
-        testCreate,
-        testRead,
-        testUpdate,
-        testImport,
-        testImportMacOS,
-        testExport,
-        testListCollections,
-        testDelete,
-        testDeleteAgain,
-        testDeleteNonHexGuid,
-        testList1,
-        testList2,
-        testList3,
-        testList4,
-        testList5,
-        testList6,
-        testList7,
-        testList8,
-        testList9,
-        testList10,
-        testList11,
-        testList12,
-        testBadCreate,
-        testBadCreateNoFields,
-        testBadCreate2,
-        testBadCreate3,
-        testBadCreate4,
-        testBadCreate5,
-        testBadCreate6,
-        testBadCreate7,
-        testBadUpdate,
-        async.apply(testDeleteAll, 5),
-        testListAfterDelete,
-        async.apply(testDeleteAll, 0),
-        testCollectionOwnAppDatabase,
-        testCollectionDitchAppDatabase,
-        testBasicOperationsOwnDatabase,
-        testNonHexId
+      createTestData(config, "fh_" + test_fhdb_name + "_fh_test_list", function () {
+        async.waterfall([
+          testCreate,
+          testRead,
+          testUpdate,
+          testImport,
+          testImportMacOS,
+          testExport,
+          testListCollections,
+          testDelete,
+          testDeleteAgain,
+          testDeleteNonHexGuid,
+          testList1,
+          testList2,
+          testList3,
+          testList4,
+          testList5,
+          testList6,
+          testList7,
+          testList8,
+          testList9,
+          testList10,
+          testList11,
+          testBadCreate,
+          testBadCreateNoFields,
+          testBadCreate2,
+          testBadCreate3,
+          testBadCreate4,
+          testBadCreate5,
+          testBadCreate6,
+          testBadCreate7,
+          testBadUpdate,
+          async.apply(testDeleteAll, 5),
+          testListAfterDelete,
+          async.apply(testDeleteAll, 0),
+          testCollectionOwnAppDatabase,
+          testCollectionDitchAppDatabase,
+          testBasicOperationsOwnDatabase,
+          testNonHexId
         ], function (err, result) {
           assert.ok(!err);
           ditch.tearDown();
