@@ -6,7 +6,7 @@ module.exports.before = function() {
   const db = new DB('test', new Server(process.env.MONGODB_HOST || "localhost", 27017));
 
   console.log("Opening database.");
-
+//[db-inspect] 
   return db.open()
     .then(d => {
       const adminDb = d.admin();

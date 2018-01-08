@@ -16,7 +16,7 @@ var createRequestReplica = {"__dbperapp": "someRemoteApp", "__fhdb": "someReplic
 ]};
 
 var LOCAL_URL = `mongodb://${process.env.MONGODB_HOST || "localhost"}:27017/FH_LOCAL`;
-
+//[db-inspect] 
 exports['test local mongo instance'] = function (cb) {
   assert.ok(!process.env['FH_MONGODB_CONN_URL']);
 
@@ -67,6 +67,7 @@ exports['test local mongo instance'] = function (cb) {
   });
 }
 
+//[db-inspect] 
 exports['test single mongo instance'] = function (cb) {
 
 
@@ -127,7 +128,7 @@ exports['test single mongo instance'] = function (cb) {
   });
 }
 
-
+//[db-inspect] 
 exports['test replica instance usage'] = function (cb) {
 
   console.log('test local database replica mongo instance');
@@ -186,7 +187,7 @@ exports['test replica instance usage'] = function (cb) {
     });
   });
 }
-
+//[db-inspect] 
 exports['test replica with invalid auth string'] = function (cb) {
 
   console.log('test local database replica mongo instance');
@@ -224,7 +225,7 @@ exports['test replica with invalid auth string'] = function (cb) {
     });
   });
 }
-
+//[db-inspect] 
 exports['test connection string parsing'] = function (cb) {
   var localdb = require("../lib/localdb.js");
 

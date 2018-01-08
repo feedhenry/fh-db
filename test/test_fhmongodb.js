@@ -57,7 +57,7 @@ var host_string_array_config = {
     "driver_options": {w:1, j:1}
   }
 };
-
+//[db-inspect] 
 exports['test Authentication'] = function(done) {
   var self = this;
   self.db = new Database(config.database.host, config.database.port, null);
@@ -72,6 +72,7 @@ exports['test Authentication'] = function(done) {
   self.db.tearUp();
 };
 
+//[db-inspect] 
 exports['test configDriverOptions'] = function(){
 
   //Creating a new database connection with no config options
@@ -87,6 +88,7 @@ exports['test configDriverOptions'] = function(){
 
 };
 
+//[db-inspect] 
 exports['test portArray'] = function(done) {
   var self = this;
   self.db = new Database(config.database.host, config.database.port, {native_parser: false});
@@ -104,7 +106,7 @@ exports['test portArray'] = function(done) {
 
 
 };
-
+//[db-inspect] 
 exports['test hostStringArray'] = function() {
   var self = this;
   self.db = new Database(host_string_array_config.database.host, host_string_array_config.database.port, {native_parser: false});
@@ -121,6 +123,7 @@ exports['test hostStringArray'] = function() {
   self.db.tearUp();
 };
 
+//[db-inspect] 
 exports['test removeAll'] = function (done) {
   var self = this;
 
@@ -168,7 +171,7 @@ exports['test removeAll'] = function (done) {
   self.db.tearUp(); // no proceed by opening db
 };
 
-
+//[db-inspect] 
 exports['test Distinct'] = function (done) {
 
   var self = this;
@@ -212,7 +215,7 @@ exports['test Distinct'] = function (done) {
   });
 };
 
-
+//[db-inspect] 
 exports[ 'test basic database ops' ] = function (done) {
   var foundItems = false;
   var test_collection_name1 = "testcollection1";
@@ -338,7 +341,7 @@ exports[ 'test basic database ops' ] = function (done) {
   }
   self.db.tearUp();
 };
-
+//[db-inspect] 
 exports[ 'test update and delete item with an id that is not hex' ] = function (done) {
   var test_collection_name = "testcollection_forinvaliddocid";
   var self = this;
@@ -415,7 +418,7 @@ exports[ 'test update and delete item with an id that is not hex' ] = function (
   }
   self.db.tearUp();
 };
-
+//[db-inspect] 
 exports['test getMongoClient'] = function (done) {
   var test_collection_name = 'testcollection_getMongoClient';
   var self = this;

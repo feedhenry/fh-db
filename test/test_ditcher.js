@@ -148,7 +148,7 @@ var test_import_data = {
 };
 
 var testTopic = "test_topic";
-
+//[db-inspect] 
 function createDatabasesAndUsers(cfg, callback) {
   var db = new mongodb.Db(cfg.database.name, new Server(cfg.database.host, cfg.database.port), { fsync: true });
 
@@ -178,7 +178,7 @@ function createDatabasesAndUsers(cfg, callback) {
     });
   });
 }
-
+//[db-inspect] 
 function createTestData(cfg, testTopic, callback) {
   var db = new fhmongodb.Database();
   db.name = cfg.database.name;
@@ -238,6 +238,7 @@ function createTestData(cfg, testTopic, callback) {
   db.tearUp(cfg.database.auth);
 };
 
+//[db-inspect] 
 function getDocs(collection, checkDocs) {
   var params = {
     "__fhdb": test_fhdb_name,
@@ -253,7 +254,7 @@ function getDocs(collection, checkDocs) {
   });
 }
 
-
+//[db-inspect] 
 var testCollectionOwnAppDatabase = function (cb) {
 
   logger.info("test testCollectionOwnAppDatabase()");
@@ -318,7 +319,7 @@ var testCollectionOwnAppDatabase = function (cb) {
   });
 }
 
-
+//[db-inspect] 
 var testCollectionDitchAppDatabase = function (cb) {
 
   //Database created again, now I create a request to ditch
@@ -364,6 +365,7 @@ var testCollectionDitchAppDatabase = function (cb) {
   });
 }
 
+//[db-inspect] 
 var testBasicOperationsOwnDatabase = function (cb) {
 
   logger.info("test testBasicOperationsOwnDatabase()");
@@ -439,7 +441,7 @@ var testBasicOperationsOwnDatabase = function (cb) {
     });
   });
 }
-
+//[db-inspect] 
 var testCreate = function (cb) {
   logger.info("test testCreate()");
   var testData = useOwnDatabase ? JSON.parse(JSON.stringify(createDataOwnApp)) : JSON.parse(JSON.stringify(createData));
@@ -456,7 +458,7 @@ var testCreate = function (cb) {
     cb(undefined, res);
   });
 };
-
+//[db-inspect] 
 var testRead = function (created, cb) {
   logger.info("test testRead()");
   var readReq = {
@@ -479,7 +481,7 @@ var testRead = function (created, cb) {
   });
 };
 
-
+//[db-inspect] 
 var testUpdate = function (created, cb) {
   logger.info("test testUpdate()");
   var updateReq = JSON.parse(JSON.stringify(created));
@@ -501,6 +503,7 @@ var testUpdate = function (created, cb) {
   });
 };
 
+//[db-inspect] 
 var testListCollections = function (created, cb) {
   logger.info("test testListCollections()");
   // We're just passing created thru to the delete test...
@@ -518,7 +521,7 @@ var testListCollections = function (created, cb) {
     cb(undefined, created);
   });
 };
-
+//[db-inspect] 
 var testDelete = function (created, cb) {
   logger.info("test testDelete()");
   var deleteReq = {
@@ -538,6 +541,7 @@ var testDelete = function (created, cb) {
   });
 };
 
+//[db-inspect] 
 var testDeleteAgain = function (created, cb) {
   logger.info("test testDeleteAgain()");
 
@@ -560,6 +564,7 @@ var testDeleteAgain = function (created, cb) {
   });
 };
 
+//[db-inspect] 
 var testDeleteNonHexGuid = function (created, cb) {
   logger.info("test testDeleteNonHexGuid()");
   var deleteReq = {
@@ -579,6 +584,7 @@ var testDeleteNonHexGuid = function (created, cb) {
   });
 };
 
+//[db-inspect] 
 var testList1 = function (cb) {
   logger.info("test testList1()");
 
@@ -602,6 +608,7 @@ var testList1 = function (cb) {
   });
 };
 
+//[db-inspect] 
 var testList2 = function (cb) {
   logger.info("test testList2()");
 
@@ -623,6 +630,7 @@ var testList2 = function (cb) {
   });
 };
 
+//[db-inspect] 
 var testList3 = function (cb) {
   logger.info("test testList3()");
 
@@ -644,6 +652,7 @@ var testList3 = function (cb) {
   });
 };
 
+//[db-inspect] 
 var testList4 = function (cb) {
   logger.info("test testList4()");
 
@@ -665,6 +674,7 @@ var testList4 = function (cb) {
   });
 };
 
+//[db-inspect] 
 var testList5 = function (cb) {
   logger.info("test testList5()");
 
@@ -686,6 +696,7 @@ var testList5 = function (cb) {
   });
 };
 
+//[db-inspect] 
 var testList6 = function (cb) {
   logger.info("test testList6()");
 
@@ -708,6 +719,7 @@ var testList6 = function (cb) {
   });
 };
 
+//[db-inspect] 
 var testList7 = function (cb) {
   logger.info("test testList7()");
 
@@ -731,6 +743,7 @@ var testList7 = function (cb) {
   });
 };
 
+//[db-inspect] 
 var testList8 = function (cb) {
   logger.info("test testList8()");
 
@@ -753,6 +766,7 @@ var testList8 = function (cb) {
   });
 };
 
+//[db-inspect] 
 var testList9 = function (cb) {
   logger.info("test testList9()");
 
@@ -775,6 +789,7 @@ var testList9 = function (cb) {
   });
 };
 
+//[db-inspect] 
 var testList10 = function (cb) {
   logger.info("test testList10()");
 
@@ -797,7 +812,7 @@ var testList10 = function (cb) {
   });
 };
 
-
+//[db-inspect] 
 var testList11 = function (cb) {
   logger.info("test testList11()");
 
@@ -823,6 +838,7 @@ var testList11 = function (cb) {
   });
 };
 
+//[db-inspect] 
 var testList12 = function (cb) {
   logger.info("test testList12()");
 
@@ -846,6 +862,7 @@ var testList12 = function (cb) {
     });
 };
 
+//[db-inspect] 
 var testListLimit = function (cb) {
   logger.info("test testListLimit()");
 
@@ -866,6 +883,7 @@ var testListLimit = function (cb) {
   });
 }
 
+//[db-inspect] 
 var testListSkip = function (cb) {
   logger.info("test testListSkip()");
 
@@ -899,6 +917,7 @@ var testListSkip = function (cb) {
   });
 };
 
+//[db-inspect] 
 var testListSort = function (cb) {
   logger.info("test testListSort()");
 
@@ -942,6 +961,7 @@ var testListSort = function (cb) {
   });
 };
 
+//[db-inspect] 
 var testBadCreateGeneric = function (name, data, cb) {
   logger.info("testing " + name);
   ditch.doCreate(data, function (err, res) {
@@ -1033,7 +1053,7 @@ var testBadCreate7 = function (cb) {
   testBadCreateGeneric("testBadCreate7", data, cb);
 };
 
-
+//[db-inspect] 
 var testBadUpdate = function (cb) {
   var badUpdateReq = {
     "__fhdb": "NOT_EXISTS",
@@ -1052,6 +1072,7 @@ var testBadUpdate = function (cb) {
   });
 };
 
+//[db-inspect] 
 var testParallelCreate = function (cb) {
   logger.info("test testParallelCreate()");
   var testData1 = useOwnDatabase ? JSON.parse(JSON.stringify(createDataOwnApp)) : JSON.parse(JSON.stringify(createData));
@@ -1094,6 +1115,7 @@ var testParallelCreate = function (cb) {
 
 };
 
+//[db-inspect] 
 var testDeleteAll = function (expectedDeleteCount, cb) {
   logger.info("test testDeleteAll(" + expectedDeleteCount + ")");
 
@@ -1114,6 +1136,7 @@ var testDeleteAll = function (expectedDeleteCount, cb) {
   });
 };
 
+//[db-inspect] 
 var testListAfterDelete = function (cb) {
   logger.info("test testListAfterDelete()");
 
@@ -1132,6 +1155,7 @@ var testListAfterDelete = function (cb) {
   });
 };
 
+//[db-inspect] 
 var testExport = function (created, cb) {
   logger.info("test testExport()");
   ditch.doExport({
@@ -1168,6 +1192,7 @@ var testExport = function (created, cb) {
   });
 };
 
+//[db-inspect] 
 var testImport = function (created, cb) {
   logger.info("test testImport()");
 
@@ -1216,6 +1241,7 @@ var testImport = function (created, cb) {
   });
 };
 
+//[db-inspect] 
 var testImportMacOS = function (created, cb) {
   logger.info("test testImport()");
 
@@ -1252,6 +1278,7 @@ var testImportMacOS = function (created, cb) {
   });
 };
 
+//[db-inspect] 
 var testNonHexId = function (done) {
   logger.info("BEGIN testNonHexId...");
 
@@ -1265,7 +1292,7 @@ var testNonHexId = function (done) {
       "lastName": "Bar"
     }
   };
-
+//[db-inspect] 
   async.waterfall([
     function (cb) {
       logger.info("test testCreate()");
@@ -1336,7 +1363,7 @@ var testNonHexId = function (done) {
 
 };
 
-
+//[db-inspect] 
 exports.testDbActions = function (done) {
   logger.info("BEGIN testDbActions...");
 
