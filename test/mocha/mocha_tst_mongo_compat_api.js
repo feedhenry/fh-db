@@ -15,7 +15,7 @@ config.database.host = process.env.MONGODB_HOST || config.database.host;
 
 var api = null;
 var db = null;
-
+//[db-inspect] 
 function createDatabasesAndUsers(cfg, callback){
   var db = new mongodb.Db(cfg.database.name, new Server(cfg.database.host, cfg.database.port), {fsync:true});
 
@@ -42,7 +42,7 @@ function createDatabasesAndUsers(cfg, callback){
     });
   });
 }
-
+//[db-inspect] 
 describe(" (db per app: " + DB_PER_APP + ")", function () {
   beforeEach(function (done) {
     createDatabasesAndUsers(config, function () {
