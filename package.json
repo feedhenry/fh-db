@@ -32,8 +32,8 @@
     "stream-buffers": "3.0.0"
   },
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-fh-build": "~1.0.2",
+    "grunt": "^1.0.2",
+    "grunt-fh-build": "^2.0.0",
     "istanbul": "^0.3.17",
     "mocha": "^3.2.0",
     "proxyquire": "~1.8.0"
