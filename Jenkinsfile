@@ -3,7 +3,14 @@
 // https://github.com/feedhenry/fh-pipeline-library
 @Library('fh-pipeline-library') _
 
-fhBuildNode {
+node('nodejs6') {
+
+    cleanWs()
+
+    stage ('Checkout') {
+        checkout scm
+    }
+
     stage('Install Dependencies') {
         npmInstall {}
     }
