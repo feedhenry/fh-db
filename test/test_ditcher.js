@@ -617,8 +617,8 @@ var testList2 = function (cb) {
     doListRequest.__dbperapp = true;
   }
 
-  ditch.doList(doListRequest, function (err, listNeqRes) {
-    assert.equal(listNeqRes.length, 3);
+  ditch.doList(doListRequest, function (err, listNeRes) {
+    assert.equal(listNeRes.length, 3);
     cb();
   });
 };
@@ -638,8 +638,8 @@ var testList3 = function (cb) {
     doListRequest.__dbperapp = true;
   }
 
-  ditch.doList(doListRequest, function (err, listNeqRes) {
-    assert.equal(listNeqRes.length, 2);
+  ditch.doList(doListRequest, function (err, listGtRes) {
+    assert.equal(listGtRes.length, 2);
     cb();
   });
 };
@@ -659,8 +659,8 @@ var testList4 = function (cb) {
     doListRequest.__dbperapp = true;
   }
 
-  ditch.doList(doListRequest, function (err, listNeqRes) {
-    assert.equal(listNeqRes.length, 3);
+  ditch.doList(doListRequest, function (err, listGeRes) {
+    assert.equal(listGeRes.length, 3);
     cb();
   });
 };
@@ -680,8 +680,8 @@ var testList5 = function (cb) {
     doListRequest.__dbperapp = true;
   }
 
-  ditch.doList(doListRequest, function (err, listNeqRes) {
-    assert.equal(listNeqRes.length, 2);
+  ditch.doList(doListRequest, function (err, listLtRes) {
+    assert.equal(listLtRes.length, 2);
     cb();
   });
 };
@@ -702,8 +702,8 @@ var testList6 = function (cb) {
   }
 
 
-  ditch.doList(doListRequest, function (err, listNeqRes) {
-    assert.equal(listNeqRes.length, 3);
+  ditch.doList(doListRequest, function (err, listLeRes) {
+    assert.equal(listLeRes.length, 3);
     cb();
   });
 };
@@ -724,9 +724,9 @@ var testList7 = function (cb) {
   }
 
 
-  ditch.doList(doListRequest, function (err, listNeqRes) {
-    assert.equal(listNeqRes.length, 1);
-    listNeqRes[0].idx = 1;
+  ditch.doList(doListRequest, function (err, listLikeRes) {
+    assert.equal(listLikeRes.length, 1);
+    listLikeRes[0].idx = 1;
     cb();
   });
 };
@@ -746,9 +746,9 @@ var testList8 = function (cb) {
     doListRequest.__dbperapp = true;
   }
 
-  ditch.doList(doListRequest, function (err, listNeqRes) {
-    assert.equal(listNeqRes.length, 4);
-    listNeqRes[0].idx = 1;
+  ditch.doList(doListRequest, function (err, listLikeRes) {
+    assert.equal(listLikeRes.length, 4);
+    listLikeRes[0].idx = 1;
     cb();
   });
 };
@@ -768,9 +768,9 @@ var testList9 = function (cb) {
     doListRequest.__dbperapp = true;
   }
 
-  ditch.doList(doListRequest, function (err, listNeqRes) {
-    assert.equal(listNeqRes.length, 4);
-    listNeqRes[0].idx = 1;
+  ditch.doList(doListRequest, function (err, listLikeRes) {
+    assert.equal(listLikeRes.length, 4);
+    listLikeRes[0].idx = 1;
     cb();
   });
 };
@@ -790,9 +790,9 @@ var testList10 = function (cb) {
     doListRequest.__dbperapp = true;
   }
 
-  ditch.doList(doListRequest, function (err, listNeqRes) {
-    assert.equal(listNeqRes.length, 3);
-    listNeqRes[0].idx = 1;
+  ditch.doList(doListRequest, function (err, listLikeRes) {
+    assert.equal(listLikeRes.length, 3);
+    listLikeRes[0].idx = 1;
     cb();
   });
 };
@@ -815,10 +815,10 @@ var testList11 = function (cb) {
     doListRequest.__dbperapp = true;
   }
 
-  ditch.doList(doListRequest, function (err, listGtltRes) {
-    assert.equal(listGtltRes.length, 2);
-    assert.equal(listGtltRes[0].fields.idx, 2);
-    assert.equal(listGtltRes[1].fields.idx, 4);
+  ditch.doList(doListRequest, function (err, listMultiGtRes) {
+    assert.equal(listMultiGtRes.length, 2);
+    assert.equal(listMultiGtRes[0].fields.idx, 2);
+    assert.equal(listMultiGtRes[1].fields.idx, 4);
     cb();
   });
 };
@@ -844,6 +844,113 @@ var testList12 = function (cb) {
     assert.equal(listInRes.length, 2);
       cb();
     });
+};
+
+var testList13 = function (cb) {
+  logger.info("test testList13()");
+
+
+  var doListRequest = {
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "gt": {
+      "num1": { value: 110, type: "Number" }
+    },
+    "le": {
+      "num1": { value: 130, type: "Number" }
+    }
+  };
+
+  if (useOwnDatabase) {
+    doListRequest.__dbperapp = true;
+  }
+
+  ditch.doList(doListRequest, function (err, listGtLeRes) {
+    assert.equal(listGtLeRes.length, 2);
+    assert.equal(listGtLeRes[0].fields.idx, 3);
+    assert.equal(listGtLeRes[1].fields.idx, 4);
+    cb();
+  });
+};
+
+var testList14 = function (cb) {
+  logger.info("test testList14()");
+
+  var doListRequest = {
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "eq": {
+      "foo": { value: "bar", type: "String" },
+      "num1": { value: 130, type: "Number" },
+      "num2": { value: 500, type: "Number" }
+    }
+  };
+
+  if (useOwnDatabase) {
+    doListRequest.__dbperapp = true;
+  }
+
+  ditch.doList(doListRequest, function (err, listMultiEqRes) {
+    assert.equal(listMultiEqRes.length, 1);
+    assert.equal(listMultiEqRes[0].fields.idx, 4);
+    cb();
+  });
+};
+
+var testList15 = function (cb) {
+  logger.info("test testList15()");
+
+  var doListRequest = {
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "eq": {
+      "foo": { value: "bar", type: "String" },
+    },
+    "lt": {
+      "num1": { value: 130, type: "Number" }
+    },
+    "gt": {
+      "num2": { value: 500, type: "Number" }
+    }
+  };
+
+  if (useOwnDatabase) {
+    doListRequest.__dbperapp = true;
+  }
+
+  ditch.doList(doListRequest, function (err, listEqLtGtRes) {
+    assert.equal(listEqLtGtRes.length, 1);
+    assert.equal(listEqLtGtRes[0].fields.idx, 2);
+    cb();
+  });
+};
+
+var testList16 = function (cb) {
+  logger.info("test testList16()");
+
+  var doListRequest = {
+    "__fhdb": test_fhdb_name,
+    "type": "fh_test_list",
+    "ne": {
+      "foo": { value: "foo", type: "String" },
+    },
+    "lt": {
+      "num1": { value: 130, type: "Number" }
+    },
+    "gt": {
+      "num2": { value: 500, type: "Number" }
+    }
+  };
+
+  if (useOwnDatabase) {
+    doListRequest.__dbperapp = true;
+  }
+
+  ditch.doList(doListRequest, function (err, listNeLtGtRes) {
+    assert.equal(listNeLtGtRes.length, 1);
+    assert.equal(listNeLtGtRes[0].fields.idx, 2);
+    cb();
+  });
 };
 
 var testListLimit = function (cb) {
@@ -1371,6 +1478,10 @@ exports.testDbActions = function (done) {
           testList10,
           testList11,
           testList12,
+          testList13,
+          testList14,
+          testList15,
+          testList16,
           testBadCreate,
           testBadCreateNoFields,
           testBadCreate2,
