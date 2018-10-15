@@ -27,7 +27,7 @@ exports['test translate date'] = function (done) {
     var translated = translateObjects.translateObjects({
         "firstName" : "Joe",
         "when" : {
-            $date: "2018-10-08T16:44:39.503Z"
+            $fhdate: "2018-10-08T16:44:39.503Z"
         }
     });
     assert.ok(translated, 'expected object to be returned');
@@ -43,7 +43,7 @@ exports['test translate with invalid date'] = function (done) {
     var translated = translateObjects.translateObjects({
         "firstName" : "Joe",
         "when" : {
-            $date: "Jim"
+            $fhdate: "Jim"
         }
     });
     assert.ok(translated, 'unexpected null value returned');
@@ -65,7 +65,7 @@ exports['test field to meta, with date'] = function (done) {
     var translated = translateObjects.translateDateObject(new Date("2018-10-08T16:44:39.503Z"));
     assert.ok(translated, 'expected object to be returned');
     assert.equal(typeof translated, "object");
-    assert.ok(translated["$date"], 'expected $date meta field')
-    assert.equal(translated["$date"], "2018-10-08T16:44:39.503Z")
+    assert.ok(translated["$fhdate"], 'expected $fhdate meta field')
+    assert.equal(translated["$fhdate"], "2018-10-08T16:44:39.503Z")
     done();
 }
